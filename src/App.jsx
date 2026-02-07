@@ -46,7 +46,7 @@ const App = () => {
     groupPrice: '10元3.3斤（买的时候说“我是群里的”）',
     bulkPrice: '3人成团100元/筐（约20斤，巨划算！想拼的下面接龙）',
     extraBenefit: '新群友首次买，免费多送您2个！老客户多送1个！',
-    winnerTemplate: '恭喜 @{name} 成为今日手气王！🎉 截个图，下次在当地的话赶集找老王领十块钱的水果！'
+    winnerTemplate: '恭喜 @隔壁小张 成为今日手气王！🎉 截个图，下次在当地的话赶集找老王领十块钱的水果！'
   };
 
   const [formData, setFormData] = useState(defaultData);
@@ -81,14 +81,6 @@ const App = () => {
 
   const getTodayDateStr = () => `今天（${new Date().toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric', weekday: 'long' })}）全天`;
   
-  const insertName = () => {
-    const placeholder = '@{name}';
-    const text = formData.winnerTemplate;
-    const start = textareaRef.current?.selectionStart || text.length;
-    const newText = text.substring(0, start) + placeholder + text.substring(textareaRef.current?.selectionEnd || text.length);
-    setFormData({ ...formData, winnerTemplate: newText });
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -108,37 +100,31 @@ const App = () => {
   👴找老王：认准【老王】的白色小货车，来了就是客！`;
   };
   
-  const previewWinnerMsg = formData.winnerTemplate.replace(/@\{name\}/g, '@隔壁小张');
+  // 此时不再需要替换占位符，直接使用模板内容
+  const previewWinnerMsg = formData.winnerTemplate;
 
-  // --- 增强版复制功能 (核心修复) ---
+  // --- 增强版复制功能 ---
   const copyText = (text, typeId) => {
-    // 成功回调
     const onSuccess = () => {
       setCopyStatus(typeId);
       setTimeout(() => setCopyStatus(0), 2000);
     };
 
-    // 方案 A: 现代 API
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(text)
         .then(onSuccess)
         .catch(() => {
-          // 如果现代 API 失败，尝试备用方案
           fallbackCopy(text, onSuccess);
         });
     } else {
-      // 方案 B: 兼容模式 (适用于部分安卓/HTTP环境)
       fallbackCopy(text, onSuccess);
     }
   };
 
-  // 备用复制实现 (模拟 textarea 选中)
   const fallbackCopy = (text, onSuccess) => {
     try {
       const textArea = document.createElement("textarea");
       textArea.value = text;
-      
-      // 确保 textarea 不可见且不影响布局
       textArea.style.top = "0";
       textArea.style.left = "0";
       textArea.style.position = "fixed";
@@ -210,7 +196,7 @@ const App = () => {
       <div className="bg-white sticky top-[34px] z-40 border-b border-gray-200 shadow-sm">
         <div className="px-5 pt-5 pb-4">
           <h1 className="text-2xl font-black text-gray-900 leading-none mb-1">老王水果摊配置</h1>
-          <p className="text-xs text-gray-400 font-mono italic">V4.4 Stable | {currentTime}</p>
+          <p className="text-xs text-gray-400 font-mono italic">V4.5 Lite | {currentTime}</p>
         </div>
         <div className="flex border-t border-gray-200 font-bold text-sm">
           <button 
@@ -282,9 +268,8 @@ const App = () => {
             </div>
 
             <div className="bg-white border border-gray-200 shadow-sm p-5 space-y-4 rounded-sm animate-in fade-in slide-in-from-bottom-4">
-              <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+              <div className="flex items-center border-b border-gray-100 pb-2">
                 <h3 className="text-xs font-bold text-gray-400 tracking-wider flex items-center gap-1"><Sparkles size={12}/> 抽奖贺信</h3>
-                <button onClick={insertName} className="bg-gray-900 text-white px-2 py-1 text-[10px] font-bold rounded-sm active:scale-95 transition-transform">＋ 插入名字</button>
               </div>
               <AutoTextarea forwardedRef={textareaRef} name="winnerTemplate" value={formData.winnerTemplate} onChange={handleInputChange} className="bg-gray-50 border border-gray-200 p-3 text-sm text-gray-700 rounded-sm" rows={3}/>
             </div>
@@ -318,7 +303,7 @@ const App = () => {
                   {previewWinnerMsg}
                 </div>
                 <CopyBtn 
-                  onClick={() => copyText(formData.winnerTemplate.replace(/@\{name\}/g, ''), 2)} 
+                  onClick={() => copyText(previewWinnerMsg, 2)} 
                   isCopied={copyStatus === 2}
                 />
               </div>
