@@ -145,3 +145,17 @@ const App = () => {
             <div className="flex justify-center"><span className="bg-gray-300 text-white text-[10px] px-2 py-0.5 rounded">上午 {notifyTime}</span></div>
             <div className="flex gap-3 items-start">
               <div className="w-10 h-10 rounded bg-[#FA9D3B] flex items-center justify-center text-white font-bold shadow-sm">王</div>
+              <div className="bg-white p-3 rounded-md shadow-sm text-sm text-[#111] leading-relaxed whitespace-pre-wrap border border-gray-200 max-w-[280px]">{previewAnnouncement}</div>
+            </div>
+            <div className="flex gap-3 items-start">
+              <div className="w-10 h-10 rounded bg-[#FA9D3B] flex items-center justify-center text-white font-bold shadow-sm">王</div>
+              <div className="bg-white p-3 rounded-md shadow-sm text-sm text-[#111] leading-relaxed whitespace-pre-wrap border border-gray-200 max-w-[280px]">{formData.winnerTemplate.replace(/@\{name\}/g, '@隔壁小张')}</div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default App;
