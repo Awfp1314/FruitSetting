@@ -8,15 +8,15 @@ import {
 const AutoTextarea = ({ className, value, onChange, name, placeholder, rows = 1, forwardedRef }) => {
   const localRef = useRef(null);
   const ref = forwardedRef || localRef;
+  
   useEffect(() => {
     if (ref.current) {
-      // 先重置为 auto 以便正确计算缩小后的 scrollHeight
       ref.current.style.height = 'auto';
-      // 核心修复：scrollHeight 是内容高度，不含边框。
-      // 我们额外 +2px 来补偿上下边框的厚度，防止文字被截断
-      ref.current.style.height = `${ref.current.scrollHeight + 2}px`;
+      const newHeight = ref.current.scrollHeight + 5;
+      ref.current.style.height = `${newHeight}px`;
     }
   }, [value, ref]);
+
   return (
     <textarea
       ref={ref}
@@ -25,8 +25,7 @@ const AutoTextarea = ({ className, value, onChange, name, placeholder, rows = 1,
       onChange={onChange}
       rows={rows}
       placeholder={placeholder}
-      // 增加 bg-transparent 防止背景色覆盖
-      className={`${className} resize-none overflow-hidden block w-full leading-normal outline-none bg-transparent`}
+      className={`${className} resize-none overflow-hidden block w-full leading-relaxed outline-none bg-transparent appearance-none`}
     />
   );
 };
@@ -34,12 +33,9 @@ const AutoTextarea = ({ className, value, onChange, name, placeholder, rows = 1,
 const App = () => {
   const [activeTab, setActiveTab] = useState('config');
   const [currentTime, setCurrentTime] = useState('');
-  
-  // 网络状态监测
   const [isOnline, setIsOnline] = useState(true);
   const [latency, setLatency] = useState(24);
   
-  // 默认数据
   const defaultData = {
     marketLocation: '榆林子镇',
     detailLocation: '进了集市，顺着兴旺路走到头，白色小货车就是！',
@@ -54,31 +50,24 @@ const App = () => {
   };
 
   const [formData, setFormData] = useState(defaultData);
-  
-  // 复制状态 (0: 无, 1: 复制了通知, 2: 复制了贺信)
   const [copyStatus, setCopyStatus] = useState(0); 
   const textareaRef = useRef(null);
 
-  // 初始化
   useEffect(() => {
-    // 读取本地存储
     const savedData = localStorage.getItem('fruitData');
     if (savedData) {
       setFormData(JSON.parse(savedData));
     }
     
-    // 时间更新
     const updateTime = () => setCurrentTime(new Date().toLocaleTimeString('zh-CN', { hour12: false }));
     updateTime();
     const timer = setInterval(() => {
       updateTime();
-      // 模拟延迟波动，增加科技感
       if (window.navigator.onLine) {
         setLatency(Math.floor(Math.random() * (45 - 20) + 20));
       }
     }, 1000);
     
-    // 网络监听
     const handleNet = () => setIsOnline(window.navigator.onLine);
     window.addEventListener('online', handleNet);
     window.addEventListener('offline', handleNet);
@@ -86,7 +75,6 @@ const App = () => {
     return () => { clearInterval(timer); window.removeEventListener('online', handleNet); window.removeEventListener('offline', handleNet); };
   }, []);
 
-  // 自动保存
   useEffect(() => {
     localStorage.setItem('fruitData', JSON.stringify(formData));
   }, [formData]);
@@ -106,7 +94,6 @@ const App = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // 生成文案
   const generateFullText = () => {
     return `【老王今天赶集通知】
 📍时间地点：${getTodayDateStr()}，在【${formData.marketLocation}】大集。
@@ -123,18 +110,59 @@ const App = () => {
   
   const previewWinnerMsg = formData.winnerTemplate.replace(/@\{name\}/g, '@隔壁小张');
 
-  // 通用复制功能
-  const copyText = async (text, typeId) => {
-    try {
-      await navigator.clipboard.writeText(text);
+  // --- 增强版复制功能 (核心修复) ---
+  const copyText = (text, typeId) => {
+    // 成功回调
+    const onSuccess = () => {
       setCopyStatus(typeId);
       setTimeout(() => setCopyStatus(0), 2000);
-    } catch (err) {
-      alert("❌ 复制失败，请手动长按文字复制");
+    };
+
+    // 方案 A: 现代 API
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text)
+        .then(onSuccess)
+        .catch(() => {
+          // 如果现代 API 失败，尝试备用方案
+          fallbackCopy(text, onSuccess);
+        });
+    } else {
+      // 方案 B: 兼容模式 (适用于部分安卓/HTTP环境)
+      fallbackCopy(text, onSuccess);
     }
   };
 
-  // 复制按钮组件
+  // 备用复制实现 (模拟 textarea 选中)
+  const fallbackCopy = (text, onSuccess) => {
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      
+      // 确保 textarea 不可见且不影响布局
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      textArea.style.width = "1px";
+      textArea.style.height = "1px";
+      
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      if (successful) {
+        onSuccess();
+      } else {
+        alert("❌ 复制失败，请尝试长按文本手动复制");
+      }
+    } catch (err) {
+      alert("❌ 您的浏览器暂不支持一键复制，请手动长按复制");
+    }
+  };
+
   const CopyBtn = ({ onClick, isCopied }) => (
     <button 
       onClick={onClick}
@@ -152,12 +180,10 @@ const App = () => {
   return (
     <div className="min-h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900">
       
-      {/* 顶部服务器状态栏 (保留科技感) */}
       <div className={`px-4 py-2 text-xs flex justify-between items-center sticky top-0 z-50 shadow-sm border-b transition-colors ${
         !isOnline ? 'bg-red-600 text-white' : 'bg-[#1e293b] text-white'
       }`}>
         <div className="flex items-center gap-2">
-          {/* 呼吸灯 */}
           <div className="relative flex h-2.5 w-2.5">
             {!isOnline ? (
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
@@ -181,11 +207,10 @@ const App = () => {
         </div>
       </div>
 
-      {/* 标题栏 */}
       <div className="bg-white sticky top-[34px] z-40 border-b border-gray-200 shadow-sm">
         <div className="px-5 pt-5 pb-4">
           <h1 className="text-2xl font-black text-gray-900 leading-none mb-1">老王水果摊配置</h1>
-          <p className="text-xs text-gray-400 font-mono italic">V4.2 Fix | {currentTime}</p>
+          <p className="text-xs text-gray-400 font-mono italic">V4.4 Stable | {currentTime}</p>
         </div>
         <div className="flex border-t border-gray-200 font-bold text-sm">
           <button 
@@ -206,7 +231,6 @@ const App = () => {
       <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-10">
         {activeTab === 'config' ? (
           <>
-            {/* 基础配置 (删除了定时发送) */}
             <div className="bg-white border border-gray-200 shadow-sm p-5 space-y-4 rounded-sm animate-in fade-in slide-in-from-bottom-2">
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2 mb-2">
                 <AlignLeft size={14} /> 基础信息
@@ -214,7 +238,6 @@ const App = () => {
               <div className="space-y-4">
                 <div>
                   <label className="text-xs text-gray-500 font-bold block mb-1">赶集地点</label>
-                  {/* 这里改成了 px-3 py-2，内边距更合理 */}
                   <AutoTextarea name="marketLocation" value={formData.marketLocation} onChange={handleInputChange} className="bg-gray-50 border border-gray-200 px-3 py-2 font-bold text-gray-900 rounded-sm"/>
                 </div>
                 <div>
@@ -224,7 +247,6 @@ const App = () => {
               </div>
             </div>
 
-            {/* 商品配置 */}
             <div className="bg-white border-t-4 border-orange-500 shadow-sm p-5 space-y-4 rounded-sm animate-in fade-in slide-in-from-bottom-3">
               <div className="flex gap-4 border-b border-gray-100 pb-4">
                 <div className="flex-1">
@@ -259,7 +281,6 @@ const App = () => {
               </div>
             </div>
 
-            {/* 抽奖配置 */}
             <div className="bg-white border border-gray-200 shadow-sm p-5 space-y-4 rounded-sm animate-in fade-in slide-in-from-bottom-4">
               <div className="flex justify-between items-center border-b border-gray-100 pb-2">
                 <h3 className="text-xs font-bold text-gray-400 tracking-wider flex items-center gap-1"><Sparkles size={12}/> 抽奖贺信</h3>
@@ -275,7 +296,6 @@ const App = () => {
         ) : (
           <div className="space-y-8 animate-in fade-in duration-300 pb-20 pt-4">
             
-            {/* 消息 1: 赶集通知 */}
             <div className="flex gap-3 items-start">
               <div className="w-10 h-10 rounded bg-[#FA9D3B] flex items-center justify-center text-white font-bold shadow-sm flex-shrink-0 mt-1">王</div>
               <div className="flex flex-col items-start gap-1 max-w-[85%]">
@@ -283,7 +303,6 @@ const App = () => {
                 <div className="bg-white p-3 rounded-md shadow-sm text-[15px] text-[#111] leading-relaxed whitespace-pre-wrap border border-gray-200">
                   {generateFullText()}
                 </div>
-                {/* 独立复制按钮 1 */}
                 <CopyBtn 
                   onClick={() => copyText(generateFullText(), 1)} 
                   isCopied={copyStatus === 1}
@@ -291,7 +310,6 @@ const App = () => {
               </div>
             </div>
 
-            {/* 消息 2: 中奖贺信 */}
             <div className="flex gap-3 items-start">
               <div className="w-10 h-10 rounded bg-[#FA9D3B] flex items-center justify-center text-white font-bold shadow-sm flex-shrink-0 mt-1">王</div>
               <div className="flex flex-col items-start gap-1 max-w-[85%]">
@@ -299,7 +317,6 @@ const App = () => {
                 <div className="bg-white p-3 rounded-md shadow-sm text-[15px] text-[#111] leading-relaxed whitespace-pre-wrap border border-gray-200">
                   {previewWinnerMsg}
                 </div>
-                {/* 独立复制按钮 2 */}
                 <CopyBtn 
                   onClick={() => copyText(formData.winnerTemplate.replace(/@\{name\}/g, ''), 2)} 
                   isCopied={copyStatus === 2}
