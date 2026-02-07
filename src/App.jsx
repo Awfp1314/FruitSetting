@@ -10,8 +10,11 @@ const AutoTextarea = ({ className, value, onChange, name, placeholder, rows = 1,
   const ref = forwardedRef || localRef;
   useEffect(() => {
     if (ref.current) {
+      // 先重置为 auto 以便正确计算缩小后的 scrollHeight
       ref.current.style.height = 'auto';
-      ref.current.style.height = `${ref.current.scrollHeight}px`;
+      // 核心修复：scrollHeight 是内容高度，不含边框。
+      // 我们额外 +2px 来补偿上下边框的厚度，防止文字被截断
+      ref.current.style.height = `${ref.current.scrollHeight + 2}px`;
     }
   }, [value, ref]);
   return (
@@ -22,7 +25,8 @@ const AutoTextarea = ({ className, value, onChange, name, placeholder, rows = 1,
       onChange={onChange}
       rows={rows}
       placeholder={placeholder}
-      className={`${className} resize-none overflow-hidden block w-full leading-normal outline-none`}
+      // 增加 bg-transparent 防止背景色覆盖
+      className={`${className} resize-none overflow-hidden block w-full leading-normal outline-none bg-transparent`}
     />
   );
 };
@@ -181,7 +185,7 @@ const App = () => {
       <div className="bg-white sticky top-[34px] z-40 border-b border-gray-200 shadow-sm">
         <div className="px-5 pt-5 pb-4">
           <h1 className="text-2xl font-black text-gray-900 leading-none mb-1">老王水果摊配置</h1>
-          <p className="text-xs text-gray-400 font-mono italic">V4.1 Lite | {currentTime}</p>
+          <p className="text-xs text-gray-400 font-mono italic">V4.2 Fix | {currentTime}</p>
         </div>
         <div className="flex border-t border-gray-200 font-bold text-sm">
           <button 
@@ -210,11 +214,12 @@ const App = () => {
               <div className="space-y-4">
                 <div>
                   <label className="text-xs text-gray-500 font-bold block mb-1">赶集地点</label>
-                  <AutoTextarea name="marketLocation" value={formData.marketLocation} onChange={handleInputChange} className="bg-gray-50 border border-gray-200 p-3 font-bold text-gray-900 rounded-sm"/>
+                  {/* 这里改成了 px-3 py-2，内边距更合理 */}
+                  <AutoTextarea name="marketLocation" value={formData.marketLocation} onChange={handleInputChange} className="bg-gray-50 border border-gray-200 px-3 py-2 font-bold text-gray-900 rounded-sm"/>
                 </div>
                 <div>
                   <label className="text-xs text-gray-500 font-bold block mb-1">位置描述</label>
-                  <AutoTextarea name="detailLocation" value={formData.detailLocation} onChange={handleInputChange} className="bg-gray-50 border border-gray-200 p-3 text-sm text-gray-600 rounded-sm"/>
+                  <AutoTextarea name="detailLocation" value={formData.detailLocation} onChange={handleInputChange} className="bg-gray-50 border border-gray-200 px-3 py-2 text-sm text-gray-600 rounded-sm"/>
                 </div>
               </div>
             </div>
