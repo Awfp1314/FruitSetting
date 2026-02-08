@@ -2,12 +2,33 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>老王水果摊配置后台</title>
+    
+    <!-- 1. 引入 APP 身份证 -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- 2. 苹果手机专用图标和全屏设置 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="老王水果">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3194/3194766.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
+  <body class="bg-[#F0F2F5]">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- 3. 启动离线管家 -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
   </body>
 </html>
+
+
