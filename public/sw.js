@@ -1,56 +1,57 @@
-// 升级版本号，强制手机更新缓存
-const CACHE_NAME = 'laowang-v3-auto';
+// 再次升级版本号，强制清除之前的旧逻辑
+const CACHE_NAME = 'laowang-v5-offline-king';
 
-// 1. 安装时：只存最核心的入口文件
+// 初始必须存死的文件（App的小命都在这几个文件里）
+const CORE_ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  'https://cdn.tailwindcss.com'
+];
+
+// 1. 安装阶段：强行把核心文件塞进手机硬盘
 self.addEventListener('install', (event) => {
-  self.skipWaiting(); // 强制立即生效
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll([
-        '/',
-        '/index.html',
-        '/manifest.json',
-        'https://cdn.tailwindcss.com'
-      ]);
+      console.log('正在强制写入核心缓存...');
+      return cache.addAll(CORE_ASSETS);
     })
   );
+  self.skipWaiting(); // 别等了，立刻上位
 });
 
-// 2. 激活时：清理旧版本的垃圾缓存
+// 2. 激活阶段：把旧版本的破烂缓存全扔了
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
+    caches.keys().then((keys) => {
       return Promise.all(
-        cacheNames.map((name) => {
-          if (name !== CACHE_NAME) {
-            return caches.delete(name);
-          }
+        keys.map((key) => {
+          if (key !== CACHE_NAME) return caches.delete(key);
         })
       );
-    }).then(() => self.clients.claim())
+    })
   );
+  return self.clients.claim(); // 宣布接管所有页面
 });
 
-// 3. 核心逻辑：拦截所有请求 -> 有缓存读缓存 -> 没缓存去下载并自动存起来
+// 3. 拦截请求：这是最关键的“离线优先”逻辑
 self.addEventListener('fetch', (event) => {
-  // 只缓存 http/https 请求，忽略 chrome-extension 等其他协议
+  // 只管 http 类的请求
   if (!event.request.url.startsWith('http')) return;
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      // A. 如果缓存里有，直接返回缓存 (秒开的关键)
+      // --- 核心逻辑 A：如果硬盘里有，直接给，一秒都不许等网络 ---
       if (cachedResponse) {
         return cachedResponse;
       }
 
-      // B. 如果缓存里没有，去网络下载
+      // --- 核心逻辑 B：硬盘里没有，再去网上下载，下完顺手存起来 ---
       return fetch(event.request).then((networkResponse) => {
-        // 检查下载是否成功
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+        if (!networkResponse || networkResponse.status !== 200) {
           return networkResponse;
         }
 
-        // C. 下载成功后，克隆一份存到缓存里 (为下次断网做准备)
         const responseToCache = networkResponse.clone();
         caches.open(CACHE_NAME).then((cache) => {
           cache.put(event.request, responseToCache);
@@ -58,8 +59,11 @@ self.addEventListener('fetch', (event) => {
 
         return networkResponse;
       }).catch(() => {
-        // D. 如果断网了且也没缓存，这里可以返回一个离线提示页(可选)
-        // 目前咱们只要保证前面缓存逻辑对，通常不会走到这一步
+        // --- 核心逻辑 C：如果断网了，且没存首页，强行返回存好的 index.html ---
+        // 这样可以防止出现你截图里的“无法访问”页面
+        if (event.request.mode === 'navigate') {
+          return caches.match('/');
+        }
       });
     })
   );
