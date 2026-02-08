@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Tag, Gift, Sparkles, Activity, Settings,
   MessageSquare, Edit3, Box, AlignLeft,
-  WifiOff, Copy, CheckCircle2, Signal
+  WifiOff, Copy, CheckCircle2, Signal, Download // 新增 Download 图标
 } from 'lucide-react';
 
 const AutoTextarea = ({ className, value, onChange, name, placeholder, rows = 1, forwardedRef }) => {
@@ -36,6 +36,10 @@ const App = () => {
   const [isOnline, setIsOnline] = useState(true);
   const [latency, setLatency] = useState(24);
   
+  // --- PWA 安装状态管理 ---
+  const [installPrompt, setInstallPrompt] = useState(null); // 存储浏览器的安装事件
+  const [isAppMode, setIsAppMode] = useState(false); // 判断当前是否已经是APP模式
+
   const defaultData = {
     marketLocation: '榆林子镇',
     detailLocation: '进了集市，顺着兴旺路走到头，白色小货车就是！',
@@ -46,7 +50,7 @@ const App = () => {
     groupPrice: '10元3.3斤（买的时候说“我是群里的”）',
     bulkPrice: '3人成团100元/筐（约20斤，巨划算！想拼的下面接龙）',
     extraBenefit: '新群友首次买，免费多送您2个！老客户多送1个！',
-    winnerTemplate: '恭喜 @隔壁小张 成为今日手气王！🎉 截个图，下次在当地的话赶集找老王领十块钱的水果！'
+    winnerTemplate: '恭喜 @{name} 成为今日手气王！🎉 截个图，下次在当地的话赶集找老王领十块钱的水果！'
   };
 
   const [formData, setFormData] = useState(defaultData);
@@ -54,6 +58,20 @@ const App = () => {
   const textareaRef = useRef(null);
 
   useEffect(() => {
+    // 1. 检查是否已经在 APP 模式下运行
+    const checkStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    setIsAppMode(checkStandalone);
+
+    // 2. 监听浏览器的安装事件 (仅在浏览器模式下触发)
+    const handleInstallPrompt = (e) => {
+      // 阻止浏览器默认的底部弹窗，改由我们的按钮控制
+      e.preventDefault();
+      setInstallPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
+
+    // 初始化数据
     const savedData = localStorage.getItem('fruitData');
     if (savedData) {
       setFormData(JSON.parse(savedData));
@@ -72,15 +90,41 @@ const App = () => {
     window.addEventListener('online', handleNet);
     window.addEventListener('offline', handleNet);
     
-    return () => { clearInterval(timer); window.removeEventListener('online', handleNet); window.removeEventListener('offline', handleNet); };
+    return () => { 
+      clearInterval(timer); 
+      window.removeEventListener('online', handleNet); 
+      window.removeEventListener('offline', handleNet);
+      window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+    };
   }, []);
 
   useEffect(() => {
     localStorage.setItem('fruitData', JSON.stringify(formData));
   }, [formData]);
 
+  // --- 处理点击安装 ---
+  const handleInstallClick = async () => {
+    if (!installPrompt) return;
+    // 触发浏览器的原生安装弹窗
+    installPrompt.prompt();
+    // 等待用户选择
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') {
+      // 如果用户点了安装，就隐藏按钮
+      setInstallPrompt(null);
+    }
+  };
+
   const getTodayDateStr = () => `今天（${new Date().toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric', weekday: 'long' })}）全天`;
   
+  const insertName = () => {
+    const placeholder = '@{name}';
+    const text = formData.winnerTemplate;
+    const start = textareaRef.current?.selectionStart || text.length;
+    const newText = text.substring(0, start) + placeholder + text.substring(textareaRef.current?.selectionEnd || text.length);
+    setFormData({ ...formData, winnerTemplate: newText });
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -100,10 +144,8 @@ const App = () => {
   👴找老王：认准【老王】的白色小货车，来了就是客！`;
   };
   
-  // 此时不再需要替换占位符，直接使用模板内容
   const previewWinnerMsg = formData.winnerTemplate;
 
-  // --- 增强版复制功能 ---
   const copyText = (text, typeId) => {
     const onSuccess = () => {
       setCopyStatus(typeId);
@@ -194,10 +236,25 @@ const App = () => {
       </div>
 
       <div className="bg-white sticky top-[34px] z-40 border-b border-gray-200 shadow-sm">
-        <div className="px-5 pt-5 pb-4">
-          <h1 className="text-2xl font-black text-gray-900 leading-none mb-1">老王水果摊配置</h1>
-          <p className="text-xs text-gray-400 font-mono italic">V4.5 Lite | {currentTime}</p>
+        {/* 标题栏布局优化：支持显示安装按钮 */}
+        <div className="px-5 pt-5 pb-4 flex justify-between items-end">
+          <div>
+            <h1 className="text-2xl font-black text-gray-900 leading-none mb-1">老王水果摊配置</h1>
+            <p className="text-xs text-gray-400 font-mono italic">V4.6 PWA | {currentTime}</p>
+          </div>
+          
+          {/* 核心：只有在非APP模式(浏览器)且支持安装时，才显示这个按钮 */}
+          {!isAppMode && installPrompt && (
+            <button 
+              onClick={handleInstallClick}
+              className="bg-gray-900 text-white px-3 py-1.5 rounded-md text-xs font-bold flex items-center gap-1.5 shadow-md active:scale-95 transition-transform animate-in fade-in slide-in-from-right-4"
+            >
+              <Download size={14} />
+              安装APP
+            </button>
+          )}
         </div>
+
         <div className="flex border-t border-gray-200 font-bold text-sm">
           <button 
             onClick={() => setActiveTab('config')} 
