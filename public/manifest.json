@@ -1,11 +1,14 @@
 {
-  "name": "老王水果摊",
+  "name": "老王水果摊配置后台",
   "short_name": "老王水果",
   "description": "老王水果摊每日价格配置工具",
+  "id": "/",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#F0F2F5",
-  "theme_color": "#1e293b",
+  "theme_color": "#ffffff",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/3194/3194766.png",
