@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Tag, Gift, Sparkles, Activity, Settings,
   MessageSquare, Edit3, Box, AlignLeft,
-  WifiOff, Copy, CheckCircle2, Signal, Download // 新增 Download 图标
+  WifiOff, Copy, CheckCircle2, Signal, Download
 } from 'lucide-react';
 
 const AutoTextarea = ({ className, value, onChange, name, placeholder, rows = 1, forwardedRef }) => {
@@ -36,9 +36,9 @@ const App = () => {
   const [isOnline, setIsOnline] = useState(true);
   const [latency, setLatency] = useState(24);
   
-  // --- PWA 安装状态管理 ---
-  const [installPrompt, setInstallPrompt] = useState(null); // 存储浏览器的安装事件
-  const [isAppMode, setIsAppMode] = useState(false); // 判断当前是否已经是APP模式
+  // --- PWA 安装状态 ---
+  const [installPrompt, setInstallPrompt] = useState(null); 
+  const [isAppMode, setIsAppMode] = useState(false); 
 
   const defaultData = {
     marketLocation: '榆林子镇',
@@ -58,20 +58,19 @@ const App = () => {
   const textareaRef = useRef(null);
 
   useEffect(() => {
-    // 1. 检查是否已经在 APP 模式下运行
+    // 检查是否在APP模式
     const checkStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
     setIsAppMode(checkStandalone);
 
-    // 2. 监听浏览器的安装事件 (仅在浏览器模式下触发)
+    // 监听安装事件
     const handleInstallPrompt = (e) => {
-      // 阻止浏览器默认的底部弹窗，改由我们的按钮控制
       e.preventDefault();
       setInstallPrompt(e);
+      console.log('安装事件已触发');
     };
 
     window.addEventListener('beforeinstallprompt', handleInstallPrompt);
 
-    // 初始化数据
     const savedData = localStorage.getItem('fruitData');
     if (savedData) {
       setFormData(JSON.parse(savedData));
@@ -102,16 +101,18 @@ const App = () => {
     localStorage.setItem('fruitData', JSON.stringify(formData));
   }, [formData]);
 
-  // --- 处理点击安装 ---
+  // --- 智能安装逻辑 ---
   const handleInstallClick = async () => {
-    if (!installPrompt) return;
-    // 触发浏览器的原生安装弹窗
-    installPrompt.prompt();
-    // 等待用户选择
-    const { outcome } = await installPrompt.userChoice;
-    if (outcome === 'accepted') {
-      // 如果用户点了安装，就隐藏按钮
-      setInstallPrompt(null);
+    if (installPrompt) {
+      // 方案 A: 浏览器支持自动安装，直接弹窗
+      installPrompt.prompt();
+      const { outcome } = await installPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setInstallPrompt(null);
+      }
+    } else {
+      // 方案 B: 浏览器不支持或未触发 (如iOS/部分安卓) -> 弹出手动引导
+      alert("👉 请点击浏览器右上角的菜单(三个点或分享图标)\n\n👉 然后选择「添加到主屏幕」或「安装应用」即可！");
     }
   };
 
@@ -236,21 +237,20 @@ const App = () => {
       </div>
 
       <div className="bg-white sticky top-[34px] z-40 border-b border-gray-200 shadow-sm">
-        {/* 标题栏布局优化：支持显示安装按钮 */}
         <div className="px-5 pt-5 pb-4 flex justify-between items-end">
           <div>
             <h1 className="text-2xl font-black text-gray-900 leading-none mb-1">老王水果摊配置</h1>
-            <p className="text-xs text-gray-400 font-mono italic">V4.6 PWA | {currentTime}</p>
+            <p className="text-xs text-gray-400 font-mono italic">V4.7 Pro | {currentTime}</p>
           </div>
           
-          {/* 核心：只有在非APP模式(浏览器)且支持安装时，才显示这个按钮 */}
-          {!isAppMode && installPrompt && (
+          {/* 核心修复：只要不是在APP里，按钮永远显示 */}
+          {!isAppMode && (
             <button 
               onClick={handleInstallClick}
               className="bg-gray-900 text-white px-3 py-1.5 rounded-md text-xs font-bold flex items-center gap-1.5 shadow-md active:scale-95 transition-transform animate-in fade-in slide-in-from-right-4"
             >
               <Download size={14} />
-              安装APP
+              {installPrompt ? '安装APP' : '添加至桌面'}
             </button>
           )}
         </div>
