@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Calendar, MapPin, Clock, ArrowLeft } from 'lucide-react';
+import { Calendar, MapPin, Clock, ArrowLeft, Settings } from 'lucide-react';
 import StatusBar from '../components/StatusBar';
+import MarketEditor from '../components/MarketEditor';
 import { getLunarInfo, getNextDaysLunar } from '../utils/lunar';
-import { getMarketsForDay } from '../constants/marketData';
+import { useMarketData } from '../hooks/useMarketData';
 
 const MarketCalendarPage = ({ onBack }) => {
   const [currentTime, setCurrentTime] = useState('');
@@ -10,6 +11,14 @@ const MarketCalendarPage = ({ onBack }) => {
   const [latency, setLatency] = useState(24);
   const [todayInfo, setTodayInfo] = useState(null);
   const [nextDays, setNextDays] = useState([]);
+  const [showEditor, setShowEditor] = useState(false);
+
+  const { markets, addMarket, updateMarket, deleteMarket, resetToDefault } = useMarketData();
+
+  const getMarketsForDay = (lunarDay) => {
+    const day = lunarDay % 10;
+    return markets.filter((market) => market.days.includes(day));
+  };
 
   useEffect(() => {
     const updateTime = () => {
@@ -65,6 +74,14 @@ const MarketCalendarPage = ({ onBack }) => {
               <p className="text-xs text-gray-400 font-mono italic">正宁县 | {currentTime}</p>
             </div>
           </div>
+
+          <button
+            onClick={() => setShowEditor(true)}
+            className="bg-gray-900 text-white px-3 py-1.5 rounded-md text-xs font-bold flex items-center gap-1.5 shadow-md active:scale-95 transition-transform"
+          >
+            <Settings size={14} />
+            管理
+          </button>
         </div>
       </div>
 
@@ -181,21 +198,42 @@ const MarketCalendarPage = ({ onBack }) => {
 
         {/* 说明 */}
         <div className="bg-white border border-gray-200 shadow-sm p-4 rounded-sm">
-          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
-            赶集规律（农历尾数）
-          </h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+              赶集规律（农历尾数）
+            </h3>
+            <button
+              onClick={() => setShowEditor(true)}
+              className="text-xs text-blue-600 font-bold hover:underline flex items-center gap-1"
+            >
+              <Settings size={12} />
+              编辑
+            </button>
+          </div>
           <div className="space-y-2 text-xs text-gray-600 leading-relaxed">
-            <p>• 山河镇(县城)：逢 1、5、8</p>
-            <p>• 榆林子镇：逢 2、6、9</p>
-            <p>• 宫河镇：逢 3、7、10</p>
-            <p>• 周家镇：逢 1、4、8</p>
-            <p>• 永和镇：逢 4、7、10</p>
-            <p>• 永正镇：逢 3、7、10</p>
-            <p>• 湫头镇：逢 3、6、9</p>
-            <p className="text-gray-400 italic pt-2">* 西坡镇、三嘉乡、五顷塬回族乡信息暂缺</p>
+            {markets.map((market, index) => (
+              <p key={index}>
+                • {market.name}：逢 {market.days.join('、')}
+              </p>
+            ))}
+            {markets.length === 0 && (
+              <p className="text-gray-400 italic">暂无数据，点击右上角"管理"添加</p>
+            )}
           </div>
         </div>
       </div>
+
+      {/* 编辑器弹窗 */}
+      {showEditor && (
+        <MarketEditor
+          markets={markets}
+          onAdd={addMarket}
+          onUpdate={updateMarket}
+          onDelete={deleteMarket}
+          onReset={resetToDefault}
+          onClose={() => setShowEditor(false)}
+        />
+      )}
     </div>
   );
 };
