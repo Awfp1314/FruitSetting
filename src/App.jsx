@@ -1,41 +1,36 @@
 import { useState, useEffect } from 'react';
 import HomePage from './pages/HomePage';
 import FruitPromoPage from './pages/FruitPromoPage';
+import MarketCalendarPage from './pages/MarketCalendarPage';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('home');
 
   const handleNavigate = (pageId) => {
-    if (pageId === 'fruit-promo') {
-      setCurrentPage('fruit-promo');
-      // 添加一个历史记录，这样返回键可以被拦截
-      window.history.pushState({ page: 'fruit-promo' }, '', '#fruit-promo');
-    }
+    setCurrentPage(pageId);
+    window.history.pushState({ page: pageId }, '', `#${pageId}`);
   };
 
   const handleBack = () => {
     setCurrentPage('home');
-    // 返回到主页时，更新 URL
     window.history.pushState({ page: 'home' }, '', '#home');
   };
 
   useEffect(() => {
-    // 监听浏览器返回事件
     const handlePopState = (event) => {
-      if (currentPage === 'fruit-promo') {
-        // 如果在二级页面，返回到主页
+      if (currentPage !== 'home') {
         setCurrentPage('home');
       } else {
-        // 如果在主页，允许退出
         window.history.back();
       }
     };
 
     window.addEventListener('popstate', handlePopState);
 
-    // 初始化时添加一个历史记录
-    if (window.location.hash === '#fruit-promo') {
-      setCurrentPage('fruit-promo');
+    // 初始化路由
+    const hash = window.location.hash.slice(1);
+    if (hash === 'fruit-promo' || hash === 'market-calendar') {
+      setCurrentPage(hash);
     } else {
       window.history.replaceState({ page: 'home' }, '', '#home');
     }
@@ -49,6 +44,7 @@ const App = () => {
     <>
       {currentPage === 'home' && <HomePage onNavigate={handleNavigate} />}
       {currentPage === 'fruit-promo' && <FruitPromoPage onBack={handleBack} />}
+      {currentPage === 'market-calendar' && <MarketCalendarPage onBack={handleBack} />}
     </>
   );
 };

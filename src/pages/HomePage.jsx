@@ -1,4 +1,4 @@
-import { MessageSquare, ArrowRight } from 'lucide-react';
+import { MessageSquare, ArrowRight, Calendar } from 'lucide-react';
 
 const HomePage = ({ onNavigate }) => {
   return (
@@ -41,6 +41,22 @@ const HomePage = ({ onNavigate }) => {
             <div className="border-b border-gray-200 px-5 py-3 bg-gray-50">
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">可用工具</h3>
             </div>
+
+            <button
+              onClick={() => onNavigate('market-calendar')}
+              className="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors active:bg-gray-100 border-b border-gray-100"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded bg-blue-500 flex items-center justify-center flex-shrink-0">
+                  <Calendar size={24} className="text-white" />
+                </div>
+                <div className="text-left">
+                  <h4 className="text-base font-bold text-gray-900 mb-1">赶集日历</h4>
+                  <p className="text-xs text-gray-500">查看今天和未来哪些地方有集</p>
+                </div>
+              </div>
+              <ArrowRight size={20} className="text-gray-400 flex-shrink-0" />
+            </button>
 
             <button
               onClick={() => onNavigate('fruit-promo')}
