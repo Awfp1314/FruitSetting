@@ -100,7 +100,7 @@ const MarketCalendarPage = ({ onBack }) => {
                   key={index}
                   className="bg-white/20 backdrop-blur-sm text-white px-5 py-3 rounded-lg text-lg font-bold shadow-md border border-white/30"
                 >
-                  {market.shortName}
+                  {market.name}
                 </div>
               ))}
             </div>
@@ -184,7 +184,7 @@ const MarketCalendarPage = ({ onBack }) => {
                           key={idx}
                           className={`${market.color} text-white px-2 py-1 rounded text-xs font-bold`}
                         >
-                          {market.shortName}
+                          {market.name}
                         </span>
                       ))}
                     </div>

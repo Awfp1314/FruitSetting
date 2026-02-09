@@ -20,7 +20,6 @@ const MarketEditor = ({ markets, onAdd, onUpdate, onDelete, onReset, onClose }) 
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    shortName: '',
     days: [],
     color: 'bg-blue-500',
   });
@@ -45,14 +44,13 @@ const MarketEditor = ({ markets, onAdd, onUpdate, onDelete, onReset, onClose }) 
     setEditingIndex(null);
     setFormData({
       name: '',
-      shortName: '',
       days: [],
       color: 'bg-blue-500',
     });
   };
 
   const handleSave = () => {
-    if (!formData.name || !formData.shortName || formData.days.length === 0) {
+    if (!formData.name || formData.days.length === 0) {
       showToast('请填写完整信息', 'error');
       return;
     }
@@ -65,13 +63,13 @@ const MarketEditor = ({ markets, onAdd, onUpdate, onDelete, onReset, onClose }) 
 
     setIsAdding(false);
     setEditingIndex(null);
-    setFormData({ name: '', shortName: '', days: [], color: 'bg-blue-500' });
+    setFormData({ name: '', days: [], color: 'bg-blue-500' });
   };
 
   const handleCancel = () => {
     setIsAdding(false);
     setEditingIndex(null);
-    setFormData({ name: '', shortName: '', days: [], color: 'bg-blue-500' });
+    setFormData({ name: '', days: [], color: 'bg-blue-500' });
   };
 
   const toggleDay = (day) => {
@@ -109,27 +107,15 @@ const MarketEditor = ({ markets, onAdd, onUpdate, onDelete, onReset, onClose }) 
                 {isAdding ? '添加新乡镇' : '编辑乡镇'}
               </h3>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs text-gray-600 font-bold block mb-1">全称</label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="如：榆林子镇"
-                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-gray-600 font-bold block mb-1">简称</label>
-                  <input
-                    type="text"
-                    value={formData.shortName}
-                    onChange={(e) => setFormData({ ...formData, shortName: e.target.value })}
-                    placeholder="如：榆林子"
-                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-                  />
-                </div>
+              <div>
+                <label className="text-xs text-gray-600 font-bold block mb-1">乡镇名称</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="如：榆林子"
+                  className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                />
               </div>
 
               <div>

@@ -26,7 +26,7 @@ const AddAccountPage = ({ onBack }) => {
     const savedMarkets = localStorage.getItem('marketSchedule');
     if (savedMarkets) {
       const markets = JSON.parse(savedMarkets);
-      const locationList = markets.map((m) => m.shortName);
+      const locationList = markets.map((m) => m.name);
       setLocations(locationList);
     }
   }, []);
