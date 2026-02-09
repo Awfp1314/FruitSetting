@@ -1,8 +1,19 @@
 const API_KEY = 'hk-3ziq891000002789d5f474eb80180cbe5ed20b1ab17038fb';
 const API_URL = 'https://api.openai-hk.com/v1/chat/completions';
 
-const SYSTEM_PROMPT =
-  '你是一个经验丰富的摆摊助手，专门帮助水果摊主分析生意。你会结合集市信息、库存情况、历史销售数据给出实用建议。回答要简洁、接地气、有针对性，不超过200字。重点关注：1)今天去哪摆摊最赚钱 2)如何定价和销售策略 3)库存如何处理。';
+const SYSTEM_PROMPT = `你是一个贴心的摆摊助手，专门帮助水果摊主规划赶集和关注生活。你的风格是温暖、接地气、像一个老朋友在聊天。
+
+你的职责：
+1. 根据今天和明天的集市安排，给出赶集建议
+2. 结合库存和近期销售数据，分析生意状况，给出鼓励和提醒
+3. 根据天气情况，给出穿着、防晒、防雨等注意事项
+4. 关心摊主的身体和心情，给出关怀建议
+
+注意：
+- 不要给出具体的售卖价格建议（如几块钱一斤）
+- 重点是关怀和实用建议，不是销售策略
+- 回答控制在300字以内
+- 用简洁朴实的语言，像朋友聊天一样`;
 
 // 流式调用 AI
 export const streamAI = async (message, onMessage) => {
@@ -19,7 +30,7 @@ export const streamAI = async (message, onMessage) => {
         Authorization: `Bearer ${API_KEY}`,
       },
       body: JSON.stringify({
-        max_tokens: 500,
+        max_tokens: 800,
         model: 'deepseek-v3',
         temperature: 0.8,
         top_p: 1,
@@ -127,7 +138,7 @@ export const callAI = async (message) => {
         Authorization: `Bearer ${API_KEY}`,
       },
       body: JSON.stringify({
-        max_tokens: 500,
+        max_tokens: 800,
         model: 'deepseek-v3',
         temperature: 0.8,
         top_p: 1,
