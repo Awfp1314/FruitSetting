@@ -3,6 +3,18 @@
 // type: 'major' | 'minor' | 'patch'
 
 export const CHANGELOG = {
+  '3.0.9': {
+    date: '2026-02-09',
+    type: 'patch',
+    title: '优化赶集日历、AI按钮、PWA兼容性',
+    changes: [
+      '• 优化赶集日历、AI按钮、PWA兼容性',
+      '• 优化赶集日历界面',
+      '• 修复AIAnalysisButton中autofix残留的重复prompt内容',
+      '• 调整AI助手：更务实的用户画像，不盲目乐观',
+      '• 修复返回导航逻辑，避免历史栈堆积',
+    ],
+  },
   '3.0.8': {
     date: '2026-02-09',
     type: 'patch',
@@ -239,7 +251,7 @@ export const CHANGELOG = {
 };
 
 // 获取当前版本
-export const CURRENT_VERSION = '3.0.8';
+export const CURRENT_VERSION = '3.0.9';
 
 // 获取版本类型的中文名称
 export const getVersionTypeName = (type) => {
