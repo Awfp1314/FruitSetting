@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Loader2 } from 'lucide-react';
 import { streamAI } from '../utils/ai';
 import { dataManager } from '../utils/dataManager';
@@ -8,7 +8,20 @@ const AIAnalysisButton = ({ markets, todayInfo }) => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState('');
 
+  // 禁止背景滚动
+  useEffect(() => {
+    if (showModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showModal]);
+
   const handleAnalyze = async () => {
+    console.log('开始分析...');
     setShowModal(true);
     setLoading(true);
     setResult('');
@@ -76,16 +89,20 @@ ${hasMarket ? `今天有集的地方：${marketNames}` : '今天没有集市'}${
 请简洁实用，不超过200字。`;
 
     try {
-      await streamAI(prompt, (text) => {
+      const finalText = await streamAI(prompt, (text) => {
+        console.log('收到文本片段，长度:', text.length);
         setResult(text);
       });
+
+      console.log('AI 分析完成，最终文本:', finalText);
+      setResult(finalText);
+      setLoading(false);
     } catch (error) {
       console.error('AI 错误:', error);
+      setLoading(false);
       setResult(
         `❌ AI 分析失败\n\n错误信息: ${error.message}\n\n可能原因：\n1. API 服务暂时不可用\n2. 网络连接问题\n3. API Key 配额用完\n\n请稍后重试或检查网络连接。`
       );
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -107,7 +124,11 @@ ${hasMarket ? `今天有集的地方：${marketNames}` : '今天没有集市'}${
             <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-purple-500 to-pink-500">
               <h3 className="text-lg font-bold text-white">AI 摆摊建议</h3>
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  setShowModal(false);
+                  setResult('');
+                  setLoading(false);
+                }}
                 className="p-1 hover:bg-white/20 rounded transition-colors"
               >
                 <X size={20} className="text-white" />
