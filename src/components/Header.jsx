@@ -27,7 +27,7 @@ const Header = ({
         )}
         <div>
           <h1 className="text-2xl font-black text-gray-900 leading-none mb-1">老王水果摊配置</h1>
-          <p className="text-xs text-gray-400 font-mono italic">V4.7 Pro | {currentTime}</p>
+          <p className="text-xs text-gray-400 font-mono italic">V2.0 | {currentTime}</p>
         </div>
       </div>
 

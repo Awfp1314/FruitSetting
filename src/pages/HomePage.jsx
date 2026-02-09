@@ -21,7 +21,7 @@ const HomePage = ({ onNavigate }) => {
       <div className="bg-white border-b border-gray-200 shadow-sm">
         <div className="px-5 pt-5 pb-4">
           <h1 className="text-2xl font-black text-gray-900 leading-none mb-1">老王工具箱</h1>
-          <p className="text-xs text-gray-400 font-mono italic">V2.0 Pro | 实用工具集</p>
+          <p className="text-xs text-gray-400 font-mono italic">V2.0 | 实用工具集</p>
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, X, Check, RotateCcw } from 'lucide-react';
 
 const COLORS = [
@@ -22,6 +22,15 @@ const MarketEditor = ({ markets, onAdd, onUpdate, onDelete, onReset, onClose }) 
     days: [],
     color: 'bg-blue-500',
   });
+
+  useEffect(() => {
+    // 弹窗打开时禁止背景滚动
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
 
   const handleEdit = (index) => {
     setEditingIndex(index);
