@@ -1,5 +1,13 @@
 import { useState, useEffect } from 'react';
-import { MessageSquare, Calendar, BookOpen, TrendingUp, Package, DollarSign } from 'lucide-react';
+import {
+  MessageSquare,
+  Calendar,
+  BookOpen,
+  TrendingUp,
+  Package,
+  DollarSign,
+  Bot,
+} from 'lucide-react';
 import { CURRENT_VERSION } from '../constants/changelog';
 import { dataManager } from '../utils/dataManager';
 
@@ -58,6 +66,12 @@ const HomePage = ({ onNavigate }) => {
       name: '促销文案',
       icon: MessageSquare,
       color: 'from-orange-500 to-red-500',
+    },
+    {
+      id: 'ai-chat',
+      name: 'AI助手',
+      icon: Bot,
+      color: 'from-purple-500 to-pink-500',
     },
     // 可以继续添加更多工具
   ];

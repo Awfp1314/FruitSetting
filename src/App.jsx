@@ -6,6 +6,7 @@ import MarketCalendarPage from './pages/MarketCalendarPage';
 import AccountPage from './pages/AccountPage';
 import AddAccountPage from './pages/AddAccountPage';
 import AddInventoryPage from './pages/AddInventoryPage';
+import AIChatPage from './pages/AIChatPage';
 import BottomNav from './components/BottomNav';
 import UpdateModal from './components/UpdateModal';
 import { ToastProvider } from './components/Toast';
@@ -51,6 +52,7 @@ const App = () => {
       'account',
       'account-add-sale',
       'account-add-inventory',
+      'ai-chat',
     ];
 
     if (validPages.includes(hash)) {
@@ -77,6 +79,7 @@ const App = () => {
       {currentPage === 'account' && <AccountPage onNavigate={handleNavigate} onBack={handleBack} />}
       {currentPage === 'account-add-sale' && <AddAccountPage onBack={handleBack} />}
       {currentPage === 'account-add-inventory' && <AddInventoryPage onBack={handleBack} />}
+      {currentPage === 'ai-chat' && <AIChatPage onBack={handleBack} />}
 
       {showBottomNav && (
         <BottomNav
