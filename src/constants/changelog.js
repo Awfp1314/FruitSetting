@@ -3,6 +3,19 @@
 // type: 'major' | 'minor' | 'patch'
 
 export const CHANGELOG = {
+  '3.0.0': {
+    date: '2026-02-09',
+    type: 'major',
+    title: '升级AI助手：全面获取数据，给出关怀建议而非价格建议',
+    changes: [
+      '• 升级AI助手：全面获取数据，给出关怀建议而非价格建议',
+      '• 移除乡镇简称字段，统一使用 name',
+      '• 替换所有原生 alert/confirm 为自定义 Toast 和 Confirm 弹窗',
+      '• 修复主页布局：添加所有工具列表，缩小仪表盘字体防止挤压',
+      '• 优化主页布局：移除搜索栏，仪表盘置顶，优化仪表盘样式',
+      '• 重构主页布局，参考支付宝设计',
+    ],
+  },
   '2.4.2': {
     date: '2026-02-09',
     type: 'patch',
@@ -120,7 +133,7 @@ export const CHANGELOG = {
 };
 
 // 获取当前版本
-export const CURRENT_VERSION = '2.4.2';
+export const CURRENT_VERSION = '3.0.0';
 
 // 获取版本类型的中文名称
 export const getVersionTypeName = (type) => {
