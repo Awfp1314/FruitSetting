@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Calendar, MapPin, Clock, ArrowLeft, Settings } from 'lucide-react';
 import StatusBar from '../components/StatusBar';
 import MarketEditor from '../components/MarketEditor';
+import AIAnalysisButton from '../components/AIAnalysisButton';
 import { getLunarInfo, getNextDaysLunar } from '../utils/lunar';
 import { useMarketData } from '../hooks/useMarketData';
 
@@ -234,6 +235,9 @@ const MarketCalendarPage = ({ onBack }) => {
           onClose={() => setShowEditor(false)}
         />
       )}
+
+      {/* AI 分析按钮 */}
+      <AIAnalysisButton markets={todayMarkets} />
     </div>
   );
 };

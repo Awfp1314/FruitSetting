@@ -1,6 +1,48 @@
-import { MessageSquare, ArrowRight, Calendar, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { MessageSquare, Calendar, ChevronRight } from 'lucide-react';
 
 const HomePage = ({ onNavigate }) => {
+  const [showMore, setShowMore] = useState(false);
+
+  // 所有工具
+  const allTools = [
+    {
+      id: 'market-calendar',
+      name: '赶集日历',
+      icon: Calendar,
+      color: 'from-blue-500 to-cyan-500',
+    },
+    {
+      id: 'fruit-promo',
+      name: '促销文案',
+      icon: MessageSquare,
+      color: 'from-orange-500 to-red-500',
+    },
+    // 可以继续添加更多工具
+  ];
+
+  // 最近使用（从 localStorage 读取）
+  const getRecentTools = () => {
+    const recent = localStorage.getItem('recentTools');
+    if (!recent) return [];
+    const ids = JSON.parse(recent);
+    return ids.map((id) => allTools.find((t) => t.id === id)).filter(Boolean);
+  };
+
+  const [recentTools] = useState(getRecentTools());
+
+  // 记录工具使用
+  const handleToolClick = (toolId) => {
+    // 更新最近使用
+    const recent = getRecentTools().map((t) => t.id);
+    const newRecent = [toolId, ...recent.filter((id) => id !== toolId)].slice(0, 5);
+    localStorage.setItem('recentTools', JSON.stringify(newRecent));
+
+    onNavigate(toolId);
+  };
+
+  const displayTools = showMore ? allTools : allTools.slice(0, 5);
+
   return (
     <div className="min-h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900 pb-16">
       {/* 顶部状态栏 */}
@@ -28,38 +70,74 @@ const HomePage = ({ onNavigate }) => {
       {/* 主内容 */}
       <div className="flex-1 overflow-y-auto p-4 pb-4">
         <div className="max-w-2xl mx-auto space-y-4">
-          {/* 欢迎卡片 */}
-          <div className="bg-gradient-to-br from-orange-500 to-red-500 border border-orange-600 shadow-lg p-6 rounded-lg text-white">
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles size={24} className="animate-pulse" />
-              <h2 className="text-xl font-black">欢迎使用</h2>
-            </div>
-            <p className="text-sm leading-relaxed opacity-90">
-              老王工具箱，专为小生意人打造。简单好用，随时随地提升工作效率。
-            </p>
-          </div>
-
-          {/* 快捷入口 */}
-          <div className="bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden">
-            <div className="border-b border-gray-200 px-5 py-3 bg-gray-50">
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">快捷入口</h3>
-            </div>
-
-            <button
-              onClick={() => onNavigate('tools')}
-              className="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors active:bg-gray-100"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0">
-                  <Calendar size={24} className="text-white" />
-                </div>
-                <div className="text-left">
-                  <h4 className="text-base font-bold text-gray-900 mb-1">查看所有工具</h4>
-                  <p className="text-xs text-gray-500">赶集日历、促销文案等更多工具</p>
-                </div>
+          {/* 最近使用 */}
+          {recentTools.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-sm font-bold text-gray-700">最近使用</h2>
               </div>
-              <ArrowRight size={20} className="text-gray-400 flex-shrink-0" />
-            </button>
+              <div className="grid grid-cols-4 gap-3">
+                {recentTools.map((tool) => {
+                  const Icon = tool.icon;
+                  return (
+                    <button
+                      key={tool.id}
+                      onClick={() => handleToolClick(tool.id)}
+                      className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all active:scale-95"
+                    >
+                      <div
+                        className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tool.color} flex items-center justify-center shadow-md`}
+                      >
+                        <Icon size={24} className="text-white" />
+                      </div>
+                      <span className="text-xs font-medium text-gray-700 text-center leading-tight">
+                        {tool.name}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* 工具 */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-bold text-gray-700">工具</h2>
+              {allTools.length > 5 && (
+                <button
+                  onClick={() => setShowMore(!showMore)}
+                  className="text-xs text-blue-600 font-bold flex items-center gap-1 hover:underline"
+                >
+                  {showMore ? '收起' : '更多'}
+                  <ChevronRight
+                    size={14}
+                    className={`transition-transform ${showMore ? 'rotate-90' : ''}`}
+                  />
+                </button>
+              )}
+            </div>
+            <div className="grid grid-cols-4 gap-3">
+              {displayTools.map((tool) => {
+                const Icon = tool.icon;
+                return (
+                  <button
+                    key={tool.id}
+                    onClick={() => handleToolClick(tool.id)}
+                    className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all active:scale-95"
+                  >
+                    <div
+                      className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tool.color} flex items-center justify-center shadow-md`}
+                    >
+                      <Icon size={24} className="text-white" />
+                    </div>
+                    <span className="text-xs font-medium text-gray-700 text-center leading-tight">
+                      {tool.name}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* 提示信息 */}
