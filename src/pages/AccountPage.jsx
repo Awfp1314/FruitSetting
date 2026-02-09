@@ -5,6 +5,7 @@ import RecordActions from '../components/RecordActions';
 import EditSaleModal from '../components/EditSaleModal';
 import EditInventoryModal from '../components/EditInventoryModal';
 import { useAccountData } from '../hooks/useAccountData';
+import { useToast } from '../components/Toast';
 
 const AccountPage = ({ onNavigate }) => {
   const {
@@ -21,19 +22,22 @@ const AccountPage = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState('sales'); // sales | inventory
   const [editingSale, setEditingSale] = useState(null);
   const [editingInventory, setEditingInventory] = useState(null);
+  const { showToast, showConfirm } = useToast();
 
-  const handleDeleteSale = (id) => {
-    if (confirm('确定要删除这条销售记录吗？删除后会恢复对应的库存。')) {
+  const handleDeleteSale = async (id) => {
+    const confirmed = await showConfirm('确定要删除这条销售记录吗？删除后会恢复对应的库存。');
+    if (confirmed) {
       deleteSale(id);
+      showToast('销售记录已删除');
     }
   };
 
-  const handleDeleteInventory = (id) => {
+  const handleDeleteInventory = async (id) => {
     const result = deleteInventory(id);
     if (!result.success) {
-      alert(result.message);
-    } else if (confirm('确定要删除这条进货记录吗？')) {
-      // 已经删除了
+      showToast(result.message, 'error');
+    } else {
+      showToast('进货记录已删除');
     }
   };
 

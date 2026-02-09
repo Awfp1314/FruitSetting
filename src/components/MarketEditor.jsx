@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, X, Check, RotateCcw } from 'lucide-react';
+import { useToast } from './Toast';
 
 const COLORS = [
   { value: 'bg-blue-500', label: '蓝色' },
@@ -14,6 +15,7 @@ const COLORS = [
 ];
 
 const MarketEditor = ({ markets, onAdd, onUpdate, onDelete, onReset, onClose }) => {
+  const { showToast, showConfirm } = useToast();
   const [editingIndex, setEditingIndex] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({
@@ -51,7 +53,7 @@ const MarketEditor = ({ markets, onAdd, onUpdate, onDelete, onReset, onClose }) 
 
   const handleSave = () => {
     if (!formData.name || !formData.shortName || formData.days.length === 0) {
-      alert('请填写完整信息');
+      showToast('请填写完整信息', 'error');
       return;
     }
 
@@ -79,8 +81,9 @@ const MarketEditor = ({ markets, onAdd, onUpdate, onDelete, onReset, onClose }) 
     setFormData({ ...formData, days: newDays });
   };
 
-  const handleReset = () => {
-    if (confirm('确定要恢复默认数据吗？这将清除所有自定义修改。')) {
+  const handleReset = async () => {
+    const confirmed = await showConfirm('确定要恢复默认数据吗？这将清除所有自定义修改。');
+    if (confirmed) {
       onReset();
       handleCancel();
     }
@@ -208,8 +211,9 @@ const MarketEditor = ({ markets, onAdd, onUpdate, onDelete, onReset, onClose }) 
                     <Edit2 size={16} className="text-blue-600" />
                   </button>
                   <button
-                    onClick={() => {
-                      if (confirm(`确定要删除 ${market.name} 吗？`)) {
+                    onClick={async () => {
+                      const confirmed = await showConfirm(`确定要删除 ${market.name} 吗？`);
+                      if (confirmed) {
                         onDelete(index);
                       }
                     }}

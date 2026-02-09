@@ -6,10 +6,12 @@ import PreviewTab from '../components/PreviewTab';
 import { useFormData } from '../hooks/useFormData';
 import { useInstallPrompt } from '../hooks/useInstallPrompt';
 import { copyToClipboard } from '../utils/clipboard';
+import { useToast } from '../components/Toast';
 import { getTodayDateStr } from '../utils/date';
 
 const FruitPromoPage = ({ onBack }) => {
   const [activeTab, setActiveTab] = useState('config');
+  const { showToast } = useToast();
   const [currentTime, setCurrentTime] = useState('');
   const [isOnline, setIsOnline] = useState(true);
   const [latency, setLatency] = useState(24);
@@ -27,14 +29,14 @@ const FruitPromoPage = ({ onBack }) => {
         setLatency(Math.floor(Math.random() * (45 - 20) + 20));
       }
     };
-    
+
     updateTime();
     const timer = setInterval(updateTime, 1000);
-    
+
     const handleNet = () => setIsOnline(window.navigator.onLine);
     window.addEventListener('online', handleNet);
     window.addEventListener('offline', handleNet);
-    
+
     return () => {
       clearInterval(timer);
       window.removeEventListener('online', handleNet);
@@ -57,21 +59,27 @@ const FruitPromoPage = ({ onBack }) => {
   };
 
   const handleCopy = (text, typeId) => {
-    copyToClipboard(text, () => {
-      setCopyStatus(typeId);
-      setTimeout(() => setCopyStatus(0), 2000);
-    });
+    copyToClipboard(
+      text,
+      () => {
+        setCopyStatus(typeId);
+        setTimeout(() => setCopyStatus(0), 2000);
+      },
+      (msg) => {
+        showToast(msg, 'error');
+      }
+    );
   };
 
   return (
     <div className="min-h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900">
       <StatusBar isOnline={isOnline} latency={latency} />
-      
+
       <Header
         currentTime={currentTime}
         isAppMode={isAppMode}
         installPrompt={installPrompt}
-        onInstall={handleInstall}
+        onInstall={() => handleInstall(showToast)}
         activeTab={activeTab}
         onTabChange={setActiveTab}
         showBackButton={true}

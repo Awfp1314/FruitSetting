@@ -1,12 +1,15 @@
 import { Settings, Info, Github, Heart, Download } from 'lucide-react';
+import { useToast } from '../components/Toast';
 
 const ProfilePage = () => {
+  const { showToast } = useToast();
+
   const menuItems = [
     {
       icon: Info,
       label: '关于应用',
       value: 'V2.0',
-      onClick: () => alert('老王工具箱 V2.0\n\n专为小生意人打造的实用工具集'),
+      onClick: () => showToast('老王工具箱 V2.0 · 专为小生意人打造', 'info'),
     },
     {
       icon: Github,
@@ -18,7 +21,7 @@ const ProfilePage = () => {
       icon: Download,
       label: '安装应用',
       value: '添加到桌面',
-      onClick: () => alert('点击浏览器菜单，选择"添加到主屏幕"即可安装'),
+      onClick: () => showToast('点击浏览器菜单，选择"添加到主屏幕"即可安装', 'info', 3000),
     },
   ];
 

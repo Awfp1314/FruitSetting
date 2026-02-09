@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { ArrowLeft, Save } from 'lucide-react';
 import StatusBar from '../components/StatusBar';
 import { useAccountData } from '../hooks/useAccountData';
+import { useToast } from '../components/Toast';
 
 const AddInventoryPage = ({ onBack }) => {
   const { addInventory } = useAccountData();
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
     fruit: '',
@@ -20,7 +22,7 @@ const AddInventoryPage = ({ onBack }) => {
 
   const handleSave = () => {
     if (!formData.fruit || !formData.boxes || !formData.pricePerBox) {
-      alert('请填写所有信息');
+      showToast('请填写所有信息', 'error');
       return;
     }
 
@@ -33,7 +35,7 @@ const AddInventoryPage = ({ onBack }) => {
     };
 
     addInventory(record);
-    alert('进货记录已保存！');
+    showToast('进货记录已保存！');
     onBack();
   };
 

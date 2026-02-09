@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
+import { useToast } from './Toast';
 
 const EditSaleModal = ({ sale, inventory, onSave, onClose }) => {
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     location: sale.location,
     sellBoxes: sale.sellBoxes,
@@ -47,7 +49,7 @@ const EditSaleModal = ({ sale, inventory, onSave, onClose }) => {
 
   const handleSave = () => {
     if (sellBoxes > maxBoxes) {
-      alert(`最多只能卖 ${maxBoxes} 框（库存不足）`);
+      showToast(`最多只能卖 ${maxBoxes} 框（库存不足）`, 'error');
       return;
     }
 

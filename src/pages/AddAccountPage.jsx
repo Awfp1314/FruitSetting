@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, Save, Package } from 'lucide-react';
 import StatusBar from '../components/StatusBar';
 import { useAccountData } from '../hooks/useAccountData';
+import { useToast } from '../components/Toast';
 
 const AddAccountPage = ({ onBack }) => {
   const { addSale, getActiveInventory } = useAccountData();
+  const { showToast } = useToast();
   const activeInventory = getActiveInventory();
 
   const [formData, setFormData] = useState({
@@ -54,13 +56,13 @@ const AddAccountPage = ({ onBack }) => {
 
   const handleSave = () => {
     if (!formData.location || !formData.inventoryId || !formData.sellBoxes) {
-      alert('请填写必填项：地点、选择库存、卖出框数');
+      showToast('请填写必填项：地点、选择库存、卖出框数', 'error');
       return;
     }
 
     const sellBoxes = parseFloat(formData.sellBoxes);
     if (selectedInventory && sellBoxes > selectedInventory.remainBoxes) {
-      alert(`库存不足！当前剩余 ${selectedInventory.remainBoxes} 框`);
+      showToast(`库存不足！当前剩余 ${selectedInventory.remainBoxes} 框`, 'error');
       return;
     }
 
@@ -80,7 +82,7 @@ const AddAccountPage = ({ onBack }) => {
     };
 
     addSale(record);
-    alert('销售记录已保存！');
+    showToast('销售记录已保存！');
     onBack();
   };
 

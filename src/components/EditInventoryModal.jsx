@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
+import { useToast } from './Toast';
 
 const EditInventoryModal = ({ inventory, hasSales, onSave, onClose }) => {
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     fruit: inventory.fruit,
     boxes: inventory.boxes,
@@ -29,7 +31,7 @@ const EditInventoryModal = ({ inventory, hasSales, onSave, onClose }) => {
 
   const handleSave = () => {
     if (boxes < soldBoxes) {
-      alert(`总框数不能少于已售出的 ${soldBoxes} 框`);
+      showToast(`总框数不能少于已售出的 ${soldBoxes} 框`, 'error');
       return;
     }
 

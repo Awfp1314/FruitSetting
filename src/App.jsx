@@ -8,6 +8,7 @@ import AddAccountPage from './pages/AddAccountPage';
 import AddInventoryPage from './pages/AddInventoryPage';
 import BottomNav from './components/BottomNav';
 import UpdateModal from './components/UpdateModal';
+import { ToastProvider } from './components/Toast';
 import { useVersionCheck } from './hooks/useVersionCheck';
 
 const App = () => {
@@ -84,7 +85,7 @@ const App = () => {
   const showBottomNav = ['home', 'profile'].includes(currentPage);
 
   return (
-    <>
+    <ToastProvider>
       {currentPage === 'home' && <HomePage onNavigate={handleNavigate} />}
       {currentPage === 'profile' && <ProfilePage />}
       {currentPage === 'fruit-promo' && <FruitPromoPage onBack={handleBack} />}
@@ -97,7 +98,7 @@ const App = () => {
 
       {/* 版本更新弹窗 */}
       {showUpdateModal && <UpdateModal version={newVersion} onClose={closeUpdateModal} />}
-    </>
+    </ToastProvider>
   );
 };
 
