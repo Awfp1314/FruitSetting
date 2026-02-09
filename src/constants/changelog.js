@@ -3,6 +3,15 @@
 // type: 'major' | 'minor' | 'patch'
 
 export const CHANGELOG = {
+  '2.4.0': {
+    date: '2026-02-09',
+    type: 'minor',
+    title: '更新主页布局',
+    changes: [
+      '• 重构主页布局，参考支付宝设计',
+      '• 优化移动端布局，修复文本换行问题',
+    ],
+  },
   '2.3.2': {
     date: '2026-02-09',
     type: 'patch',
@@ -94,7 +103,7 @@ export const CHANGELOG = {
 };
 
 // 获取当前版本
-export const CURRENT_VERSION = '2.3.2';
+export const CURRENT_VERSION = '2.4.0';
 
 // 获取版本类型的中文名称
 export const getVersionTypeName = (type) => {
