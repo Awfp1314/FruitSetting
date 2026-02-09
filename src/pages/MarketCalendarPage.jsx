@@ -104,7 +104,7 @@ const MarketCalendarPage = ({ onBack }) => {
                     key={index}
                     className={`${market.color} text-white px-4 py-2 rounded-full text-sm font-bold shadow-sm`}
                   >
-                    {market.name}
+                    {market.shortName}
                   </div>
                 ))}
               </div>
@@ -166,7 +166,7 @@ const MarketCalendarPage = ({ onBack }) => {
                           key={idx}
                           className={`${market.color} text-white px-2 py-1 rounded text-xs font-bold`}
                         >
-                          {market.name}
+                          {market.shortName}
                         </span>
                       ))}
                     </div>
@@ -182,14 +182,17 @@ const MarketCalendarPage = ({ onBack }) => {
         {/* 说明 */}
         <div className="bg-white border border-gray-200 shadow-sm p-4 rounded-sm">
           <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
-            赶集规律
+            赶集规律（农历尾数）
           </h3>
           <div className="space-y-2 text-xs text-gray-600 leading-relaxed">
-            <p>• 县城、周家：逢农历 1、5、8</p>
-            <p>• 榆林子：逢农历 2、6、9</p>
-            <p>• 宫河、永正：逢农历 3、7、10</p>
-            <p>• 揪头：逢农历 3、6、9</p>
-            <p>• 永和：逢农历 4、7、10</p>
+            <p>• 山河镇(县城)：逢 1、5、8</p>
+            <p>• 榆林子镇：逢 2、6、9</p>
+            <p>• 宫河镇：逢 3、7、10</p>
+            <p>• 周家镇：逢 1、4、8</p>
+            <p>• 永和镇：逢 4、7、10</p>
+            <p>• 永正镇：逢 3、7、10</p>
+            <p>• 湫头镇：逢 3、6、9</p>
+            <p className="text-gray-400 italic pt-2">* 西坡镇、三嘉乡、五顷塬回族乡信息暂缺</p>
           </div>
         </div>
       </div>
