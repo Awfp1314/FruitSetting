@@ -1,11 +1,35 @@
 import { useState } from 'react';
 import { Plus, TrendingUp, DollarSign, Package, Box } from 'lucide-react';
 import StatusBar from '../components/StatusBar';
+import RecordActions from '../components/RecordActions';
 import { useAccountData } from '../hooks/useAccountData';
 
 const AccountPage = ({ onNavigate }) => {
-  const { inventory, sales, getStats, getTotalStock, getActiveInventory } = useAccountData();
+  const {
+    inventory,
+    sales,
+    deleteSale,
+    deleteInventory,
+    getStats,
+    getTotalStock,
+    getActiveInventory,
+  } = useAccountData();
   const [activeTab, setActiveTab] = useState('sales'); // sales | inventory
+
+  const handleDeleteSale = (id) => {
+    if (confirm('确定要删除这条销售记录吗？删除后会恢复对应的库存。')) {
+      deleteSale(id);
+    }
+  };
+
+  const handleDeleteInventory = (id) => {
+    const result = deleteInventory(id);
+    if (!result.success) {
+      alert(result.message);
+    } else if (confirm('确定要删除这条进货记录吗？')) {
+      // 已经删除了
+    }
+  };
 
   const stats = getStats(30);
   const totalStock = getTotalStock();
@@ -119,6 +143,10 @@ const AccountPage = ({ onNavigate }) => {
                         <p className="text-xs text-gray-500">卖了 {sale.sellBoxes} 框</p>
                       </div>
                     </div>
+                    <RecordActions
+                      onEdit={() => alert('编辑功能开发中...')}
+                      onDelete={() => handleDeleteSale(sale.id)}
+                    />
                   </div>
                 ))
               )}
@@ -166,41 +194,54 @@ const AccountPage = ({ onNavigate }) => {
                   </button>
                 </div>
               ) : (
-                inventory.map((inv) => (
-                  <div
-                    key={inv.id}
-                    className={`bg-white border shadow-sm p-4 rounded-lg ${
-                      inv.status === 'active' ? 'border-blue-200' : 'border-gray-200 opacity-60'
-                    }`}
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-base font-bold text-gray-900">{inv.fruit}</span>
-                          {inv.status === 'active' ? (
-                            <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-bold">
-                              在售
-                            </span>
-                          ) : (
-                            <span className="bg-gray-100 text-gray-500 text-xs px-2 py-0.5 rounded-full font-bold">
-                              已售完
-                            </span>
-                          )}
+                inventory.map((inv) => {
+                  const hasSales = sales.some((s) => s.inventoryId === inv.id);
+                  return (
+                    <div
+                      key={inv.id}
+                      className={`bg-white border shadow-sm p-4 rounded-lg ${
+                        inv.status === 'active' ? 'border-blue-200' : 'border-gray-200 opacity-60'
+                      }`}
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-base font-bold text-gray-900">{inv.fruit}</span>
+                            {inv.status === 'active' ? (
+                              <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-bold">
+                                在售
+                              </span>
+                            ) : (
+                              <span className="bg-gray-100 text-gray-500 text-xs px-2 py-0.5 rounded-full font-bold">
+                                已售完
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-400">{inv.date} 进货</p>
                         </div>
-                        <p className="text-xs text-gray-400">{inv.date} 进货</p>
+                        <div className="text-right">
+                          <p className="text-lg font-black text-gray-900">
+                            {inv.remainBoxes}/{inv.boxes} 框
+                          </p>
+                          <p className="text-xs text-gray-500">¥{inv.pricePerBox}/框</p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-lg font-black text-gray-900">
-                          {inv.remainBoxes}/{inv.boxes} 框
+                      <div className="bg-gray-50 px-3 py-2 rounded text-xs text-gray-600">
+                        总成本：¥{inv.totalCost}
+                      </div>
+                      <RecordActions
+                        onEdit={() => alert('编辑功能开发中...')}
+                        onDelete={() => handleDeleteInventory(inv.id)}
+                        canDelete={!hasSales}
+                      />
+                      {hasSales && (
+                        <p className="text-xs text-red-500 mt-2 text-center">
+                          该进货有关联销售记录，无法删除
                         </p>
-                        <p className="text-xs text-gray-500">¥{inv.pricePerBox}/框</p>
-                      </div>
+                      )}
                     </div>
-                    <div className="bg-gray-50 px-3 py-2 rounded text-xs text-gray-600">
-                      总成本：¥{inv.totalCost}
-                    </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           </>

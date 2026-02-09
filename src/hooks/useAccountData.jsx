@@ -88,11 +88,96 @@ export const useAccountData = () => {
     }, 0);
   };
 
+  // 编辑进货记录
+  const updateInventory = (id, updates) => {
+    const updatedInventory = inventory.map((inv) => {
+      if (inv.id === id) {
+        return { ...inv, ...updates };
+      }
+      return inv;
+    });
+    setInventory(updatedInventory);
+    dataManager.save({ inventory: updatedInventory, sales });
+  };
+
+  // 删除进货记录
+  const deleteInventory = (id) => {
+    // 检查是否有关联的销售记录
+    const hasSales = sales.some((s) => s.inventoryId === id);
+    if (hasSales) {
+      return { success: false, message: '该进货记录有关联的销售记录，无法删除' };
+    }
+
+    const newInventory = inventory.filter((inv) => inv.id !== id);
+    setInventory(newInventory);
+    dataManager.save({ inventory: newInventory, sales });
+    return { success: true };
+  };
+
+  // 编辑销售记录
+  const updateSale = (id, updates) => {
+    const oldSale = sales.find((s) => s.id === id);
+    if (!oldSale) return;
+
+    // 如果修改了卖出框数，需要更新库存
+    if (updates.sellBoxes !== undefined && updates.sellBoxes !== oldSale.sellBoxes) {
+      const diff = updates.sellBoxes - oldSale.sellBoxes;
+      const updatedInventory = inventory.map((inv) => {
+        if (inv.id === oldSale.inventoryId) {
+          const newRemain = inv.remainBoxes - diff;
+          return {
+            ...inv,
+            remainBoxes: newRemain,
+            status: newRemain <= 0 ? 'finished' : 'active',
+          };
+        }
+        return inv;
+      });
+      setInventory(updatedInventory);
+      dataManager.save({
+        inventory: updatedInventory,
+        sales: sales.map((s) => (s.id === id ? { ...s, ...updates } : s)),
+      });
+    } else {
+      const updatedSales = sales.map((s) => (s.id === id ? { ...s, ...updates } : s));
+      setSales(updatedSales);
+      dataManager.save({ inventory, sales: updatedSales });
+    }
+  };
+
+  // 删除销售记录
+  const deleteSale = (id) => {
+    const sale = sales.find((s) => s.id === id);
+    if (!sale) return;
+
+    // 恢复库存
+    const updatedInventory = inventory.map((inv) => {
+      if (inv.id === sale.inventoryId) {
+        const newRemain = inv.remainBoxes + sale.sellBoxes;
+        return {
+          ...inv,
+          remainBoxes: newRemain,
+          status: 'active',
+        };
+      }
+      return inv;
+    });
+
+    const newSales = sales.filter((s) => s.id !== id);
+    setInventory(updatedInventory);
+    setSales(newSales);
+    dataManager.save({ inventory: updatedInventory, sales: newSales });
+  };
+
   return {
     inventory,
     sales,
     addInventory,
     addSale,
+    updateInventory,
+    deleteInventory,
+    updateSale,
+    deleteSale,
     getActiveInventory,
     getStats,
     getTotalStock,
