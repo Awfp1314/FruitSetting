@@ -2,60 +2,99 @@ import { useState, useEffect } from 'react';
 import { dataManager } from '../utils/dataManager';
 
 export const useAccountData = () => {
-  const [records, setRecords] = useState([]);
+  const [inventory, setInventory] = useState([]);
+  const [sales, setSales] = useState([]);
 
   useEffect(() => {
     const data = dataManager.load();
-    setRecords(data.records || []);
+    setInventory(data.inventory || []);
+    setSales(data.sales || []);
   }, []);
 
-  const addRecord = (record) => {
+  // 添加进货
+  const addInventory = (record) => {
+    const newRecord = {
+      id: Date.now().toString(),
+      ...record,
+      remainBoxes: record.boxes,
+      status: 'active',
+      createdAt: new Date().toISOString(),
+    };
+    const newInventory = [newRecord, ...inventory];
+    setInventory(newInventory);
+    dataManager.save({ inventory: newInventory, sales });
+    return newRecord;
+  };
+
+  // 添加销售记录
+  const addSale = (record) => {
     const newRecord = {
       id: Date.now().toString(),
       ...record,
       createdAt: new Date().toISOString(),
     };
-    const newRecords = [newRecord, ...records];
-    setRecords(newRecords);
-    dataManager.save({ records: newRecords });
+
+    // 更新库存
+    const updatedInventory = inventory.map((inv) => {
+      if (inv.id === record.inventoryId) {
+        const newRemain = inv.remainBoxes - record.sellBoxes;
+        return {
+          ...inv,
+          remainBoxes: newRemain,
+          status: newRemain <= 0 ? 'finished' : 'active',
+        };
+      }
+      return inv;
+    });
+
+    const newSales = [newRecord, ...sales];
+    setInventory(updatedInventory);
+    setSales(newSales);
+    dataManager.save({ inventory: updatedInventory, sales: newSales });
     return newRecord;
   };
 
-  const updateRecord = (id, updates) => {
-    const newRecords = records.map((r) => (r.id === id ? { ...r, ...updates } : r));
-    setRecords(newRecords);
-    dataManager.save({ records: newRecords });
+  // 获取活跃库存（还有剩余的）
+  const getActiveInventory = () => {
+    return inventory.filter((inv) => inv.status === 'active' && inv.remainBoxes > 0);
   };
 
-  const deleteRecord = (id) => {
-    const newRecords = records.filter((r) => r.id !== id);
-    setRecords(newRecords);
-    dataManager.save({ records: newRecords });
-  };
-
+  // 获取统计数据
   const getStats = (days = 30) => {
     const now = new Date();
     const startDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
 
-    const recentRecords = records.filter((r) => new Date(r.date) >= startDate);
+    const recentSales = sales.filter((s) => new Date(s.date) >= startDate);
 
-    const totalIncome = recentRecords.reduce((sum, r) => sum + (r.totalIncome || 0), 0);
-    const totalProfit = recentRecords.reduce((sum, r) => sum + (r.profit || 0), 0);
-    const totalCost = recentRecords.reduce((sum, r) => sum + (r.totalCost || 0), 0);
+    const totalIncome = recentSales.reduce((sum, s) => sum + (s.totalIncome || 0), 0);
+    const totalProfit = recentSales.reduce((sum, s) => sum + (s.profit || 0), 0);
+    const totalCost = recentSales.reduce((sum, s) => sum + (s.cost || 0), 0);
 
     return {
       totalIncome,
       totalProfit,
       totalCost,
-      recordCount: recentRecords.length,
+      saleCount: recentSales.length,
     };
   };
 
+  // 获取总库存数量
+  const getTotalStock = () => {
+    return inventory.reduce((sum, inv) => {
+      if (inv.status === 'active') {
+        return sum + inv.remainBoxes;
+      }
+      return sum;
+    }, 0);
+  };
+
   return {
-    records,
-    addRecord,
-    updateRecord,
-    deleteRecord,
+    inventory,
+    sales,
+    addInventory,
+    addSale,
+    getActiveInventory,
     getStats,
+    getTotalStock,
   };
 };
