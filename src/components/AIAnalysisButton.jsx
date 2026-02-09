@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { Sparkles, X, Loader2 } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 import { streamAI } from '../utils/ai';
-import { getLunarInfo } from '../utils/lunar';
 
-const AIAnalysisButton = ({ markets }) => {
+const AIAnalysisButton = ({ markets, todayInfo }) => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState('');
@@ -13,18 +12,18 @@ const AIAnalysisButton = ({ markets }) => {
     setLoading(true);
     setResult('');
 
-    const today = getLunarInfo();
     const marketNames = markets.map((m) => m.name).join('、');
+    const hasMarket = markets.length > 0;
 
-    const prompt = `今天是${today.solarDate.toLocaleDateString('zh-CN')}，农历${today.lunarDateStr}，星期${today.weekDay}。
-今天有集的地方：${marketNames || '无'}。
+    const prompt = `今天是${todayInfo.solarDate.toLocaleDateString('zh-CN')}，农历${todayInfo.lunarDateStr}，星期${todayInfo.weekDay}。
+${hasMarket ? `今天有集的地方：${marketNames}` : '今天没有集市'}
 
-请分析：
-1. 今天是否适合赶集？
-2. 需要注意什么？
-3. 给出具体建议。
+我是一个摆摊卖水果的小商贩。请从摆摊人的角度分析：
+1. ${hasMarket ? '今天适合去哪个集市摆摊？为什么？' : '今天没集，我应该做什么准备？'}
+2. 需要注意什么？（天气、进货、定价等）
+3. 给我具体的建议
 
-请简洁回答，不超过200字。`;
+请简洁实用，不超过150字。`;
 
     try {
       await streamAI(prompt, (text) => {
@@ -45,9 +44,9 @@ const AIAnalysisButton = ({ markets }) => {
       {/* 悬浮按钮 */}
       <button
         onClick={handleAnalyze}
-        className="fixed bottom-20 right-4 w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 active:scale-95 transition-transform z-40"
+        className="fixed bottom-20 right-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full shadow-lg px-4 py-3 text-white text-sm font-bold hover:scale-105 active:scale-95 transition-transform z-40 flex items-center gap-2"
       >
-        <Sparkles size={24} className="animate-pulse" />
+        AI 分析
       </button>
 
       {/* AI 分析弹窗 */}
@@ -56,10 +55,7 @@ const AIAnalysisButton = ({ markets }) => {
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[80vh] overflow-hidden flex flex-col animate-in fade-in slide-in-from-bottom-4">
             {/* 头部 */}
             <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-purple-500 to-pink-500">
-              <div className="flex items-center gap-2 text-white">
-                <Sparkles size={20} />
-                <h3 className="text-lg font-bold">AI 赶集分析</h3>
-              </div>
+              <h3 className="text-lg font-bold text-white">AI 摆摊建议</h3>
               <button
                 onClick={() => setShowModal(false)}
                 className="p-1 hover:bg-white/20 rounded transition-colors"

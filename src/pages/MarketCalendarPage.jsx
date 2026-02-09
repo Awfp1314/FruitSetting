@@ -87,59 +87,57 @@ const MarketCalendarPage = ({ onBack }) => {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-10">
-        {/* 今日信息 */}
-        <div className="bg-white border-t-4 border-orange-500 shadow-sm p-5 rounded-sm">
-          <div className="flex items-center gap-2 mb-4">
-            <Calendar size={20} className="text-orange-600" />
-            <h2 className="text-lg font-bold text-gray-900">今天</h2>
+        {/* 今天有集的地方 - 最突出 */}
+        {todayMarkets.length > 0 ? (
+          <div className="bg-gradient-to-br from-orange-500 to-red-500 shadow-lg p-6 rounded-lg">
+            <div className="flex items-center gap-2 mb-4">
+              <MapPin size={24} className="text-white" />
+              <h2 className="text-xl font-black text-white">今天有集！</h2>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {todayMarkets.map((market, index) => (
+                <div
+                  key={index}
+                  className="bg-white/20 backdrop-blur-sm text-white px-5 py-3 rounded-lg text-lg font-bold shadow-md border border-white/30"
+                >
+                  {market.shortName}
+                </div>
+              ))}
+            </div>
+            <p className="text-white/80 text-sm mt-4">💡 今天可以去这些地方摆摊赶集</p>
           </div>
-
-          <div className="bg-orange-50 border border-orange-200 rounded-sm p-4 mb-4">
-            <div className="flex items-baseline gap-3 mb-2">
-              <span className="text-3xl font-black text-orange-600">
-                农历 {todayInfo.lunarDateStr}
-              </span>
-              <span className="text-sm text-gray-500">星期{todayInfo.weekDay}</span>
-            </div>
-            <p className="text-xs text-gray-500">
-              {todayInfo.solarDate.toLocaleDateString('zh-CN', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </p>
+        ) : (
+          <div className="bg-gray-100 border-2 border-dashed border-gray-300 p-6 rounded-lg text-center">
+            <p className="text-lg font-bold text-gray-500 mb-2">今天没有集市</p>
+            <p className="text-sm text-gray-400">休息一天，准备明天的货</p>
           </div>
+        )}
 
-          {todayMarkets.length > 0 ? (
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <MapPin size={16} className="text-green-600" />
-                <h3 className="text-sm font-bold text-gray-700">今天有集的地方</h3>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {todayMarkets.map((market, index) => (
-                  <div
-                    key={index}
-                    className={`${market.color} text-white px-4 py-2 rounded-full text-sm font-bold shadow-sm`}
-                  >
-                    {market.shortName}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="bg-gray-50 border border-gray-200 rounded-sm p-4 text-center">
-              <p className="text-sm text-gray-500">今天没有集市</p>
-            </div>
-          )}
+        {/* 今天日期信息 */}
+        <div className="bg-white border border-gray-200 shadow-sm p-5 rounded-lg">
+          <div className="flex items-center gap-2 mb-3">
+            <Calendar size={18} className="text-blue-600" />
+            <h3 className="text-sm font-bold text-gray-700">今天日期</h3>
+          </div>
+          <div className="flex items-baseline gap-3">
+            <span className="text-3xl font-black text-gray-900">农历 {todayInfo.lunarDateStr}</span>
+            <span className="text-sm text-gray-500">星期{todayInfo.weekDay}</span>
+          </div>
+          <p className="text-xs text-gray-400 mt-2">
+            {todayInfo.solarDate.toLocaleDateString('zh-CN', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </p>
         </div>
 
         {/* 未来7天 */}
-        <div className="bg-white border border-gray-200 shadow-sm rounded-sm overflow-hidden">
+        <div className="bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden">
           <div className="border-b border-gray-200 px-5 py-3 bg-gray-50">
             <div className="flex items-center gap-2">
               <Clock size={16} className="text-gray-400" />
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">未来7天</h3>
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">未来集市</h3>
             </div>
           </div>
 
@@ -157,7 +155,9 @@ const MarketCalendarPage = ({ onBack }) => {
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <span
-                          className={`text-base font-bold ${isToday ? 'text-orange-600' : 'text-gray-900'}`}
+                          className={`text-base font-bold ${
+                            isToday ? 'text-orange-600' : 'text-gray-900'
+                          }`}
                         >
                           {day.lunarDateStr}
                         </span>
@@ -198,7 +198,7 @@ const MarketCalendarPage = ({ onBack }) => {
         </div>
 
         {/* 说明 */}
-        <div className="bg-white border border-gray-200 shadow-sm p-4 rounded-sm">
+        <div className="bg-white border border-gray-200 shadow-sm p-4 rounded-lg">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
               赶集规律（农历尾数）
@@ -237,7 +237,7 @@ const MarketCalendarPage = ({ onBack }) => {
       )}
 
       {/* AI 分析按钮 */}
-      <AIAnalysisButton markets={todayMarkets} />
+      <AIAnalysisButton markets={todayMarkets} todayInfo={todayInfo} />
     </div>
   );
 };

@@ -12,7 +12,7 @@ export const streamAI = async (message, onMessage) => {
       },
       body: JSON.stringify({
         max_tokens: 500,
-        model: 'deepseek-v3', // 正确的模型名
+        model: 'deepseek-v3',
         temperature: 0.8,
         top_p: 1,
         presence_penalty: 1,
@@ -20,7 +20,7 @@ export const streamAI = async (message, onMessage) => {
           {
             role: 'system',
             content:
-              '你是一个赶集助手，帮助用户分析今天是否适合赶集。请简洁明了地给出建议，不超过150字。',
+              '你是一个摆摊助手，帮助摆摊商贩分析今天是否适合摆摊、去哪里摆摊。请从摆摊人的角度给出实用建议，简洁明了，不超过150字。',
           },
           {
             role: 'user',
@@ -97,7 +97,7 @@ export const callAI = async (message) => {
           {
             role: 'system',
             content:
-              '你是一个赶集助手，帮助用户分析今天是否适合赶集。请简洁明了地给出建议，不超过150字。',
+              '你是一个摆摊助手，帮助摆摊商贩分析今天是否适合摆摊、去哪里摆摊。请从摆摊人的角度给出实用建议，简洁明了，不超过150字。',
           },
           {
             role: 'user',
