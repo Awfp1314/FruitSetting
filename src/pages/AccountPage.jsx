@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Plus, TrendingUp, DollarSign, Package, Box, ArrowLeft } from 'lucide-react';
-import RecordActions from '../components/RecordActions';
+import { Plus, TrendingUp, DollarSign, Package, Box, ArrowLeft, Edit2, Trash2 } from 'lucide-react';
 import EditSaleModal from '../components/EditSaleModal';
 import EditInventoryModal from '../components/EditInventoryModal';
 import { useAccountData } from '../hooks/useAccountData';
@@ -148,8 +147,8 @@ const AccountPage = ({ onNavigate }) => {
               ) : (
                 sales.map((sale) => (
                   <div key={sale.id} className="bg-white rounded-xl p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
+                    <div className="flex items-start gap-3">
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
                           <span className="text-sm font-bold text-gray-900">{sale.fruit}</span>
                           <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">
@@ -161,17 +160,27 @@ const AccountPage = ({ onNavigate }) => {
                         </p>
                       </div>
                       <p
-                        className={`text-base font-black ${
+                        className={`text-base font-black flex-shrink-0 ${
                           sale.profit >= 0 ? 'text-green-600' : 'text-red-600'
                         }`}
                       >
                         {sale.profit >= 0 ? '+' : ''}¥{sale.profit}
                       </p>
+                      <div className="flex flex-col gap-1.5 flex-shrink-0">
+                        <button
+                          onClick={() => setEditingSale(sale)}
+                          className="p-1.5 hover:bg-blue-50 rounded-lg transition-colors"
+                        >
+                          <Edit2 size={14} className="text-gray-400" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteSale(sale.id)}
+                          className="p-1.5 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                          <Trash2 size={14} className="text-gray-300" />
+                        </button>
+                      </div>
                     </div>
-                    <RecordActions
-                      onEdit={() => setEditingSale(sale)}
-                      onDelete={() => handleDeleteSale(sale.id)}
-                    />
                   </div>
                 ))
               )}
@@ -221,8 +230,8 @@ const AccountPage = ({ onNavigate }) => {
                         inv.status !== 'active' ? 'opacity-50' : ''
                       }`}
                     >
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
+                      <div className="flex items-start gap-3">
+                        <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-0.5">
                             <span className="text-sm font-bold text-gray-900">{inv.fruit}</span>
                             {inv.status === 'active' ? (
@@ -239,15 +248,31 @@ const AccountPage = ({ onNavigate }) => {
                             {inv.date} · ¥{inv.pricePerBox}/框 · 成本¥{inv.totalCost}
                           </p>
                         </div>
-                        <div className="text-right">
+                        <div className="text-right flex-shrink-0">
                           <p className="text-base font-black text-gray-900">
                             {inv.remainBoxes}/{inv.boxes}
                           </p>
                           <p className="text-[10px] text-gray-400">框</p>
                         </div>
+                        <div className="flex flex-col gap-1.5 flex-shrink-0">
+                          <button
+                            onClick={() => setEditingInventory(inv)}
+                            className="p-1.5 hover:bg-blue-50 rounded-lg transition-colors"
+                          >
+                            <Edit2 size={14} className="text-gray-400" />
+                          </button>
+                          {!hasSales && (
+                            <button
+                              onClick={() => handleDeleteInventory(inv.id)}
+                              className="p-1.5 hover:bg-red-50 rounded-lg transition-colors"
+                            >
+                              <Trash2 size={14} className="text-gray-300" />
+                            </button>
+                          )}
+                        </div>
                       </div>
                       {/* 库存进度条 */}
-                      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-2">
+                      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mt-2.5">
                         <div
                           className={`h-full rounded-full transition-all ${
                             percent > 50
@@ -259,16 +284,7 @@ const AccountPage = ({ onNavigate }) => {
                           style={{ width: `${percent}%` }}
                         ></div>
                       </div>
-                      <RecordActions
-                        onEdit={() => setEditingInventory(inv)}
-                        onDelete={() => handleDeleteInventory(inv.id)}
-                        canDelete={!hasSales}
-                      />
-                      {hasSales && (
-                        <p className="text-[10px] text-gray-400 mt-1.5 text-center">
-                          有关联销售记录，无法删除
-                        </p>
-                      )}
+                    </div>
                     </div>
                   );
                 })
