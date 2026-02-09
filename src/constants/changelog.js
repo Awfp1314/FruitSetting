@@ -3,6 +3,14 @@
 // type: 'major' | 'minor' | 'patch'
 
 export const CHANGELOG = {
+  '2.4.1': {
+    date: '2026-02-09',
+    type: 'patch',
+    title: '优化布局',
+    changes: [
+      '• 优化主页布局：移除搜索栏，仪表盘置顶，优化仪表盘样式',
+    ],
+  },
   '2.4.0': {
     date: '2026-02-09',
     type: 'minor',
@@ -103,7 +111,7 @@ export const CHANGELOG = {
 };
 
 // 获取当前版本
-export const CURRENT_VERSION = '2.4.0';
+export const CURRENT_VERSION = '2.4.1';
 
 // 获取版本类型的中文名称
 export const getVersionTypeName = (type) => {
