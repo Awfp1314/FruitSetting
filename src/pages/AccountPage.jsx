@@ -5,7 +5,7 @@ import EditInventoryModal from '../components/EditInventoryModal';
 import { useAccountData } from '../hooks/useAccountData';
 import { useToast } from '../components/Toast';
 
-const AccountPage = ({ onNavigate }) => {
+const AccountPage = ({ onNavigate, onBack }) => {
   const {
     inventory,
     sales,
@@ -60,7 +60,7 @@ const AccountPage = ({ onNavigate }) => {
         <div className="px-4 pt-4 pb-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button
-              onClick={() => onNavigate('home')}
+              onClick={onBack}
               className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <ArrowLeft size={20} className="text-gray-600" />

@@ -16,43 +16,26 @@ const App = () => {
   const [pageParams, setPageParams] = useState(null);
   const { showUpdateModal, newVersion, closeUpdateModal } = useVersionCheck();
 
+  // 前进导航：push 新记录到历史栈
   const handleNavigate = (pageId, params = null) => {
     setCurrentPage(pageId);
     setPageParams(params);
     window.history.pushState({ page: pageId, params }, '', `#${pageId}`);
   };
 
+  // 返回导航：用浏览器的 back，让 popstate 处理页面切换
   const handleBack = () => {
-    // 从记账相关页面返回到记账本
-    if (currentPage === 'account-add-sale' || currentPage === 'account-add-inventory') {
-      setCurrentPage('account');
-      setPageParams(null);
-      window.history.pushState({ page: 'account' }, '', '#account');
-    }
-    // 从其他工具页面返回到首页
-    else {
-      setCurrentPage('home');
-      setPageParams(null);
-      window.history.pushState({ page: 'home' }, '', '#home');
-    }
+    window.history.back();
   };
 
   useEffect(() => {
     const handlePopState = (event) => {
-      // 如果在工具详情页，返回到首页
-      if (
-        currentPage === 'fruit-promo' ||
-        currentPage === 'market-calendar' ||
-        currentPage === 'account' ||
-        currentPage === 'account-add-sale' ||
-        currentPage === 'account-add-inventory'
-      ) {
+      if (event.state && event.state.page) {
+        setCurrentPage(event.state.page);
+        setPageParams(event.state.params || null);
+      } else {
         setCurrentPage('home');
         setPageParams(null);
-      }
-      // 如果在主要页面（home/profile），允许退出
-      else {
-        window.history.back();
       }
     };
 
@@ -60,18 +43,19 @@ const App = () => {
 
     // 初始化路由
     const hash = window.location.hash.slice(1);
-    if (
-      [
-        'home',
-        'profile',
-        'fruit-promo',
-        'market-calendar',
-        'account',
-        'account-add-sale',
-        'account-add-inventory',
-      ].includes(hash)
-    ) {
+    const validPages = [
+      'home',
+      'profile',
+      'fruit-promo',
+      'market-calendar',
+      'account',
+      'account-add-sale',
+      'account-add-inventory',
+    ];
+
+    if (validPages.includes(hash)) {
       setCurrentPage(hash);
+      window.history.replaceState({ page: hash }, '', `#${hash}`);
     } else {
       window.history.replaceState({ page: 'home' }, '', '#home');
     }
@@ -79,7 +63,7 @@ const App = () => {
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
-  }, [currentPage]);
+  }, []);
 
   // 判断是否显示底部导航
   const showBottomNav = ['home', 'profile'].includes(currentPage);
@@ -90,11 +74,20 @@ const App = () => {
       {currentPage === 'profile' && <ProfilePage />}
       {currentPage === 'fruit-promo' && <FruitPromoPage onBack={handleBack} />}
       {currentPage === 'market-calendar' && <MarketCalendarPage onBack={handleBack} />}
-      {currentPage === 'account' && <AccountPage onNavigate={handleNavigate} />}
+      {currentPage === 'account' && <AccountPage onNavigate={handleNavigate} onBack={handleBack} />}
       {currentPage === 'account-add-sale' && <AddAccountPage onBack={handleBack} />}
       {currentPage === 'account-add-inventory' && <AddInventoryPage onBack={handleBack} />}
 
-      {showBottomNav && <BottomNav currentPage={currentPage} onNavigate={handleNavigate} />}
+      {showBottomNav && (
+        <BottomNav
+          currentPage={currentPage}
+          onNavigate={(pageId) => {
+            setCurrentPage(pageId);
+            setPageParams(null);
+            window.history.replaceState({ page: pageId }, '', `#${pageId}`);
+          }}
+        />
+      )}
 
       {/* 版本更新弹窗 */}
       {showUpdateModal && <UpdateModal version={newVersion} onClose={closeUpdateModal} />}
