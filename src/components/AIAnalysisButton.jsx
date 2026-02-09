@@ -91,14 +91,26 @@ const AIAnalysisButton = ({ markets, todayInfo }) => {
 
     let inventoryInfo = '';
     if (activeInventory.length > 0) {
+      const today = new Date();
       inventoryInfo = activeInventory
-        .map(
-          (inv) =>
-            `- ${inv.fruit}：剩余${inv.remainBoxes}框（共${inv.boxes}框，进货成本¥${inv.pricePerBox}/框，${inv.date}进货）`
-        )
+        .map((inv) => {
+          const daysSince = Math.floor((today - new Date(inv.date)) / (1000 * 60 * 60 * 24));
+          const soldBoxes = inv.boxes - inv.remainBoxes;
+          const soldPercent = inv.boxes > 0 ? Math.round((soldBoxes / inv.boxes) * 100) : 0;
+          return `- ${inv.fruit}：进了${inv.boxes}框，已卖${soldBoxes}框(${soldPercent}%)，剩${inv.remainBoxes}框，进货${daysSince}天了，成本¥${inv.pricePerBox}/框`;
+        })
         .join('\n');
     } else {
       inventoryInfo = '暂无库存';
+    }
+
+    // 计算整体销售速度
+    let salesPace = '';
+    if (activeInventory.length > 0 && recentSales.length > 0) {
+      const avgBoxesPerDay = totalBoxes7d / 7;
+      const totalRemain = activeInventory.reduce((sum, inv) => sum + inv.remainBoxes, 0);
+      const estDays = avgBoxesPerDay > 0 ? Math.round(totalRemain / avgBoxesPerDay) : 0;
+      salesPace = `\n按近7天速度（日均${avgBoxesPerDay.toFixed(1)}框），剩余${totalRemain}框大约还需${estDays}天卖完`;
     }
 
     let salesDetail = '';
@@ -124,20 +136,22 @@ const AIAnalysisButton = ({ markets, todayInfo }) => {
 📅 今日集市：${markets.length > 0 ? todayMarketNames : '今天没有集市'}
 📅 明日集市（农历${tomorrowLunar.lunarDateStr}，星期${tomorrowLunar.weekDay}）：${tomorrowMarkets.length > 0 ? tomorrowMarketNames : '明天没有集市'}
 
-📦 当前库存：
+📦 当前库存（请注意进货天数和卖出比例）：
 ${inventoryInfo}
 
 📊 近7天销售汇总：
-- 总收入：¥${totalIncome7d}，总利润：¥${totalProfit7d}，共卖出${totalBoxes7d}框
+- 总收入：¥${totalIncome7d}，总利润：¥${totalProfit7d}，共卖出${totalBoxes7d}框${salesPace}
 ${salesDetail ? '\n按日期：\n' + salesDetail : ''}
 ${locationDetail ? '\n按地点：\n' + locationDetail : ''}
 
-请帮我分析以下内容：
-1. 🗓️ 今日赶集建议：今天该去哪里？如果没集，今天适合做什么准备？
-2. 🗓️ 明日赶集建议：明天的集市安排和准备事项
-3. 📦 库存提醒：库存是否充足，是否需要补货，哪些水果需要尽快卖出
-4. 📈 生意状况：结合近几天的销售数据，生意怎么样，给点鼓励
-5. 🌤️ 天气与注意事项：根据当前季节和地区（甘肃庆阳），提醒穿着、防寒/防晒、饮水等注意事项
+请基于以上真实数据，务实地分析：
+1. 🗓️ 今日和明日赶集安排
+2. 📦 库存情况：如实分析卖货速度，如果积压就直说，给出应对建议
+3. 📈 生意状况：基于数据客观分析，不要编造乐观预测
+4. 🌤️ 天气和注意事项：根据季节提醒穿着等
+5. 💪 说几句实在的关心话
+
+记住：不要盲目乐观，不要做不切实际的预测，实事求是。`;
 6. 💪 关怀建议：摆摊辛苦，给一些暖心的话和健康提醒
 
 不要给出具体的售卖价格建议。重点是关怀、鼓励和实用提醒。`;
