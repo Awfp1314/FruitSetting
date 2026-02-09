@@ -111,42 +111,42 @@ const HomePage = ({ onNavigate }) => {
                 </button>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-2.5">
                 {/* 今日利润 */}
-                <div className="bg-white/10 rounded-lg p-3">
-                  <div className="flex items-center gap-1 mb-2 opacity-90">
-                    <TrendingUp size={14} />
-                    <span className="text-xs">今日利润</span>
+                <div className="bg-white/10 rounded-lg p-2.5">
+                  <div className="flex items-center gap-0.5 mb-1.5 opacity-90">
+                    <TrendingUp size={12} />
+                    <span className="text-[10px] leading-tight">今日利润</span>
                   </div>
-                  <p className="text-xl font-black">
+                  <p className="text-base font-black leading-tight">
                     {accountStats.todayProfit >= 0 ? '+' : ''}¥{accountStats.todayProfit}
                   </p>
                 </div>
 
                 {/* 本周收入 */}
-                <div className="bg-white/10 rounded-lg p-3">
-                  <div className="flex items-center gap-1 mb-2 opacity-90">
-                    <DollarSign size={14} />
-                    <span className="text-xs">本周收入</span>
+                <div className="bg-white/10 rounded-lg p-2.5">
+                  <div className="flex items-center gap-0.5 mb-1.5 opacity-90">
+                    <DollarSign size={12} />
+                    <span className="text-[10px] leading-tight">本周收入</span>
                   </div>
-                  <p className="text-xl font-black">¥{accountStats.weekIncome}</p>
+                  <p className="text-base font-black leading-tight">¥{accountStats.weekIncome}</p>
                 </div>
 
                 {/* 库存 */}
-                <div className="bg-white/10 rounded-lg p-3">
-                  <div className="flex items-center gap-1 mb-2 opacity-90">
-                    <Package size={14} />
-                    <span className="text-xs">剩余库存</span>
+                <div className="bg-white/10 rounded-lg p-2.5">
+                  <div className="flex items-center gap-0.5 mb-1.5 opacity-90">
+                    <Package size={12} />
+                    <span className="text-[10px] leading-tight whitespace-nowrap">剩余库存</span>
                   </div>
-                  <p className="text-xl font-black">{accountStats.totalStock} 框</p>
+                  <p className="text-base font-black leading-tight">{accountStats.totalStock}框</p>
                 </div>
               </div>
 
               {/* 本周利润 */}
-              <div className="mt-4 pt-4 border-t border-white/20">
+              <div className="mt-3 pt-3 border-t border-white/20">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm opacity-90">本周利润</span>
-                  <span className="text-2xl font-black">
+                  <span className="text-xs opacity-90">本周利润</span>
+                  <span className="text-xl font-black">
                     {accountStats.weekProfit >= 0 ? '+' : ''}¥{accountStats.weekProfit}
                   </span>
                 </div>
