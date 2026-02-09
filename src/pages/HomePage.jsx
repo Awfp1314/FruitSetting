@@ -118,46 +118,46 @@ const HomePage = ({ onNavigate }) => {
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="grid grid-cols-3 gap-2 mb-3">
                     {/* 今日利润 */}
-                    <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/10">
-                      <div className="flex items-center gap-1 mb-2 opacity-90">
-                        <TrendingUp size={14} />
-                        <span className="text-[11px] leading-tight">今日利润</span>
+                    <div className="bg-white/15 backdrop-blur-sm rounded-xl p-2.5 border border-white/10">
+                      <div className="flex items-center gap-0.5 mb-1 opacity-90">
+                        <TrendingUp size={12} />
+                        <span className="text-[10px] whitespace-nowrap">今日利润</span>
                       </div>
-                      <p className="text-lg font-black leading-tight">
+                      <p className="text-[15px] font-black leading-tight">
                         {accountStats.todayProfit >= 0 ? '+' : ''}¥{accountStats.todayProfit}
                       </p>
                     </div>
 
                     {/* 本周收入 */}
-                    <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/10">
-                      <div className="flex items-center gap-1 mb-2 opacity-90">
-                        <DollarSign size={14} />
-                        <span className="text-[11px] leading-tight">本周收入</span>
+                    <div className="bg-white/15 backdrop-blur-sm rounded-xl p-2.5 border border-white/10">
+                      <div className="flex items-center gap-0.5 mb-1 opacity-90">
+                        <DollarSign size={12} />
+                        <span className="text-[10px] whitespace-nowrap">本周收入</span>
                       </div>
-                      <p className="text-lg font-black leading-tight">¥{accountStats.weekIncome}</p>
+                      <p className="text-[15px] font-black leading-tight">
+                        ¥{accountStats.weekIncome}
+                      </p>
                     </div>
 
                     {/* 库存 */}
-                    <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/10">
-                      <div className="flex items-center gap-1 mb-2 opacity-90">
-                        <Package size={14} />
-                        <span className="text-[11px] leading-tight whitespace-nowrap">
-                          剩余库存
-                        </span>
+                    <div className="bg-white/15 backdrop-blur-sm rounded-xl p-2.5 border border-white/10">
+                      <div className="flex items-center gap-0.5 mb-1 opacity-90">
+                        <Package size={12} />
+                        <span className="text-[10px] whitespace-nowrap">剩余库存</span>
                       </div>
-                      <p className="text-lg font-black leading-tight">
+                      <p className="text-[15px] font-black leading-tight">
                         {accountStats.totalStock}框
                       </p>
                     </div>
                   </div>
 
                   {/* 本周利润 - 突出显示 */}
-                  <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                  <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 border border-white/20">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium opacity-90">本周利润</span>
-                      <span className="text-2xl font-black">
+                      <span className="text-xs font-medium opacity-90">本周利润</span>
+                      <span className="text-xl font-black">
                         {accountStats.weekProfit >= 0 ? '+' : ''}¥{accountStats.weekProfit}
                       </span>
                     </div>
@@ -167,12 +167,12 @@ const HomePage = ({ onNavigate }) => {
             </div>
           )}
 
-          {/* 常用应用 */}
+          {/* 常用工具 */}
           <div className="bg-white mx-4 mt-3 rounded-xl p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className="w-1 h-4 bg-blue-500 rounded-full"></div>
-                <h2 className="text-sm font-bold text-gray-800">常用</h2>
+                <h2 className="text-sm font-bold text-gray-800">常用工具</h2>
               </div>
             </div>
             <div className="grid grid-cols-4 gap-4">
@@ -192,6 +192,48 @@ const HomePage = ({ onNavigate }) => {
                     <span className="text-xs font-medium text-gray-700 text-center leading-tight">
                       {tool.name}
                     </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 所有工具 */}
+          <div className="bg-white mx-4 mt-3 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-1 h-4 bg-orange-500 rounded-full"></div>
+                <h2 className="text-sm font-bold text-gray-800">所有工具</h2>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {allTools.map((tool) => {
+                const Icon = tool.icon;
+                return (
+                  <button
+                    key={tool.id}
+                    onClick={() => handleToolClick(tool.id)}
+                    className="w-full flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 active:scale-[0.98] transition-all"
+                  >
+                    <div
+                      className={`w-10 h-10 rounded-lg bg-gradient-to-br ${tool.color} flex items-center justify-center shadow-sm`}
+                    >
+                      <Icon size={20} className="text-white" />
+                    </div>
+                    <span className="text-sm font-medium text-gray-800">{tool.name}</span>
+                    <svg
+                      className="w-4 h-4 text-gray-400 ml-auto"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
                   </button>
                 );
               })}
