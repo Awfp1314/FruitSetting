@@ -1,7 +1,44 @@
-import { useState } from 'react';
-import { MessageSquare, Calendar, BookOpen } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { MessageSquare, Calendar, BookOpen, TrendingUp, Package, DollarSign } from 'lucide-react';
+import { CURRENT_VERSION } from '../constants/changelog';
+import { dataManager } from '../utils/dataManager';
 
 const HomePage = ({ onNavigate }) => {
+  const [accountStats, setAccountStats] = useState(null);
+
+  useEffect(() => {
+    // 加载记账数据统计
+    const data = dataManager.load();
+    const { inventory = [], sales = [] } = data;
+
+    // 计算统计数据
+    const activeInventory = inventory.filter(
+      (inv) => inv.status === 'active' && inv.remainBoxes > 0
+    );
+    const totalStock = activeInventory.reduce((sum, inv) => sum + inv.remainBoxes, 0);
+
+    // 最近7天销售
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const recentSales = sales.filter((s) => new Date(s.date) >= sevenDaysAgo);
+
+    const weekIncome = recentSales.reduce((sum, s) => sum + (s.totalIncome || 0), 0);
+    const weekProfit = recentSales.reduce((sum, s) => sum + (s.profit || 0), 0);
+
+    // 今天销售
+    const today = new Date().toISOString().split('T')[0];
+    const todaySales = sales.filter((s) => s.date === today);
+    const todayProfit = todaySales.reduce((sum, s) => sum + (s.profit || 0), 0);
+
+    setAccountStats({
+      totalStock,
+      activeInventoryCount: activeInventory.length,
+      weekIncome,
+      weekProfit,
+      todayProfit,
+      hasSales: sales.length > 0,
+    });
+  }, []);
   // 所有工具
   const allTools = [
     {
@@ -54,13 +91,69 @@ const HomePage = ({ onNavigate }) => {
       <div className="bg-white border-b border-gray-200 shadow-sm">
         <div className="px-5 pt-5 pb-4">
           <h1 className="text-2xl font-black text-gray-900 leading-none mb-1">老王工具箱</h1>
-          <p className="text-xs text-gray-400 font-mono italic">V2.0 | 实用工具集</p>
+          <p className="text-xs text-gray-400 font-mono italic">v{CURRENT_VERSION} | 实用工具集</p>
         </div>
       </div>
 
       {/* 主内容 */}
       <div className="flex-1 overflow-y-auto p-4 pb-4">
         <div className="max-w-2xl mx-auto space-y-4">
+          {/* 数据仪表盘 */}
+          {accountStats && accountStats.hasSales && (
+            <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-xl shadow-lg p-5 text-white">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-base font-bold">生意概况</h2>
+                <button
+                  onClick={() => onNavigate('account')}
+                  className="text-xs bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full transition-colors"
+                >
+                  查看详情
+                </button>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                {/* 今日利润 */}
+                <div className="bg-white/10 rounded-lg p-3">
+                  <div className="flex items-center gap-1 mb-2 opacity-90">
+                    <TrendingUp size={14} />
+                    <span className="text-xs">今日利润</span>
+                  </div>
+                  <p className="text-xl font-black">
+                    {accountStats.todayProfit >= 0 ? '+' : ''}¥{accountStats.todayProfit}
+                  </p>
+                </div>
+
+                {/* 本周收入 */}
+                <div className="bg-white/10 rounded-lg p-3">
+                  <div className="flex items-center gap-1 mb-2 opacity-90">
+                    <DollarSign size={14} />
+                    <span className="text-xs">本周收入</span>
+                  </div>
+                  <p className="text-xl font-black">¥{accountStats.weekIncome}</p>
+                </div>
+
+                {/* 库存 */}
+                <div className="bg-white/10 rounded-lg p-3">
+                  <div className="flex items-center gap-1 mb-2 opacity-90">
+                    <Package size={14} />
+                    <span className="text-xs">剩余库存</span>
+                  </div>
+                  <p className="text-xl font-black">{accountStats.totalStock} 框</p>
+                </div>
+              </div>
+
+              {/* 本周利润 */}
+              <div className="mt-4 pt-4 border-t border-white/20">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm opacity-90">本周利润</span>
+                  <span className="text-2xl font-black">
+                    {accountStats.weekProfit >= 0 ? '+' : ''}¥{accountStats.weekProfit}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* 最近使用 */}
           {recentTools.length > 0 && (
             <div>
