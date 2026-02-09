@@ -41,7 +41,7 @@ class AccountDataManager {
       }
       return JSON.parse(dataStr);
     } catch {
-      return { records: [] };
+      return { inventory: [], sales: [] };
     }
   }
 
@@ -63,14 +63,18 @@ class AccountDataManager {
       }
     }
 
-    return JSON.stringify({ records: [] });
+    return JSON.stringify({ inventory: [], sales: [] });
   }
 
   validateData(dataStr) {
     if (!dataStr) return false;
     try {
       const data = JSON.parse(dataStr);
-      return data && Array.isArray(data.records);
+      // 兼容新旧数据格式
+      return (
+        data &&
+        (Array.isArray(data.records) || Array.isArray(data.inventory) || Array.isArray(data.sales))
+      );
     } catch {
       return false;
     }

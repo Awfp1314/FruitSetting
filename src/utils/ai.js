@@ -6,6 +6,9 @@ const SYSTEM_PROMPT =
 
 // 流式调用 AI
 export const streamAI = async (message, onMessage) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30秒超时
+
   try {
     const response = await fetch(API_URL, {
       method: 'POST',
@@ -31,11 +34,15 @@ export const streamAI = async (message, onMessage) => {
         ],
         stream: true,
       }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`API 错误 ${response.status}: ${errorText}`);
+      console.error('API 响应错误:', response.status, errorText);
+      throw new Error(`API 服务异常 (${response.status})`);
     }
 
     const reader = response.body.getReader();
@@ -63,18 +70,24 @@ export const streamAI = async (message, onMessage) => {
               onMessage(fullText);
             }
           } catch (e) {
-            console.error('解析错误:', e, 'data:', data);
+            console.error('解析 JSON 错误:', e, 'data:', data);
           }
         }
       }
     }
 
     if (!fullText) {
-      throw new Error('AI 没有返回内容');
+      throw new Error('AI 没有返回内容，请稍后重试');
     }
 
     return fullText;
   } catch (error) {
+    clearTimeout(timeoutId);
+
+    if (error.name === 'AbortError') {
+      throw new Error('请求超时，请检查网络连接');
+    }
+
     console.error('AI 调用失败:', error);
     throw error;
   }
