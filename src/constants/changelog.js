@@ -3,6 +3,18 @@
 // type: 'major' | 'minor' | 'patch'
 
 export const CHANGELOG = {
+  '3.0.11': {
+    date: '2026-02-09',
+    type: 'patch',
+    title: '完善AI用户画像：正宁县山河镇松树村，补充赶集路线和生活细节',
+    changes: [
+      '• 完善AI用户画像：正宁县山河镇松树村，补充赶集路线和生活细节',
+      '• AI助手支持多轮对话，新增独立AI助手工具，修复销售天数计算',
+      '• 优化赶集日历、AI按钮、PWA兼容性',
+      '• 优化赶集日历界面',
+      '• 修复AIAnalysisButton中autofix残留的重复prompt内容',
+    ],
+  },
   '3.0.10': {
     date: '2026-02-09',
     type: 'patch',
@@ -263,7 +275,7 @@ export const CHANGELOG = {
 };
 
 // 获取当前版本
-export const CURRENT_VERSION = '3.0.10';
+export const CURRENT_VERSION = '3.0.11';
 
 // 获取版本类型的中文名称
 export const getVersionTypeName = (type) => {
