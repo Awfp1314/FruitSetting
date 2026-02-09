@@ -3,6 +3,19 @@
 // type: 'major' | 'minor' | 'patch'
 
 export const CHANGELOG = {
+  '3.0.7': {
+    date: '2026-02-09',
+    type: 'patch',
+    title: '修复AIAnalysisButton中autofix残留的重复prompt内容',
+    changes: [
+      '• 修复AIAnalysisButton中autofix残留的重复prompt内容',
+      '• 调整AI助手：更务实的用户画像，不盲目乐观',
+      '• 修复返回导航逻辑，避免历史栈堆积',
+      '• 修复AccountPage多余闭合标签导致构建失败',
+      '• 将编辑删除按钮改为记录行内小图标',
+      '• 优化记账、销售、进货三个页面的移动端布局',
+    ],
+  },
   '3.0.6': {
     date: '2026-02-09',
     type: 'patch',
@@ -213,7 +226,7 @@ export const CHANGELOG = {
 };
 
 // 获取当前版本
-export const CURRENT_VERSION = '3.0.6';
+export const CURRENT_VERSION = '3.0.7';
 
 // 获取版本类型的中文名称
 export const getVersionTypeName = (type) => {
