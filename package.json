@@ -1,7 +1,7 @@
 {
   "name": "laowang-toolbox",
   "private": true,
-  "version": "3.0.3",
+  "version": "3.0.4",
   "type": "module",
   "description": "老王工具箱 - 专为小生意人打造的实用工具集",
   "author": "老王",
