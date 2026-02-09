@@ -1,6 +1,9 @@
 const API_KEY = 'hk-3ziq891000002789d5f474eb80180cbe5ed20b1ab17038fb';
 const API_URL = 'https://api.openai-hk.com/v1/chat/completions';
 
+const SYSTEM_PROMPT =
+  '你是一个经验丰富的摆摊助手，专门帮助水果摊主分析生意。你会结合集市信息、库存情况、历史销售数据给出实用建议。回答要简洁、接地气、有针对性，不超过200字。重点关注：1)今天去哪摆摊最赚钱 2)如何定价和销售策略 3)库存如何处理。';
+
 // 流式调用 AI
 export const streamAI = async (message, onMessage) => {
   try {
@@ -19,8 +22,7 @@ export const streamAI = async (message, onMessage) => {
         messages: [
           {
             role: 'system',
-            content:
-              '你是一个摆摊助手，帮助摆摊商贩分析今天是否适合摆摊、去哪里摆摊。请从摆摊人的角度给出实用建议，简洁明了，不超过150字。',
+            content: SYSTEM_PROMPT,
           },
           {
             role: 'user',
@@ -96,8 +98,7 @@ export const callAI = async (message) => {
         messages: [
           {
             role: 'system',
-            content:
-              '你是一个摆摊助手，帮助摆摊商贩分析今天是否适合摆摊、去哪里摆摊。请从摆摊人的角度给出实用建议，简洁明了，不超过150字。',
+            content: SYSTEM_PROMPT,
           },
           {
             role: 'user',
