@@ -3,6 +3,33 @@
 // type: 'major' | 'minor' | 'patch'
 
 export const CHANGELOG = {
+  '3.0.3': {
+    date: '2026-02-09',
+    type: 'patch',
+    title: '修复AccountPage多余闭合标签导致构建失败',
+    changes: [
+      '• 修复AccountPage多余闭合标签导致构建失败',
+      '• 将编辑删除按钮改为记录行内小图标',
+      '• 优化记账、销售、进货三个页面的移动端布局',
+      '• 升级AI助手：全面获取数据，给出关怀建议而非价格建议',
+      '• 移除乡镇简称字段，统一使用 name',
+      '• 替换所有原生 alert/confirm 为自定义 Toast 和 Confirm 弹窗',
+      '• 修复主页布局：添加所有工具列表，缩小仪表盘字体防止挤压',
+    ],
+  },
+  '3.0.2': {
+    date: '2026-02-09',
+    type: 'patch',
+    title: '将编辑删除按钮改为记录行内小图标',
+    changes: [
+      '• 将编辑删除按钮改为记录行内小图标',
+      '• 优化记账、销售、进货三个页面的移动端布局',
+      '• 升级AI助手：全面获取数据，给出关怀建议而非价格建议',
+      '• 移除乡镇简称字段，统一使用 name',
+      '• 替换所有原生 alert/confirm 为自定义 Toast 和 Confirm 弹窗',
+      '• 修复主页布局：添加所有工具列表，缩小仪表盘字体防止挤压',
+    ],
+  },
   '3.0.1': {
     date: '2026-02-09',
     type: 'patch',
@@ -146,7 +173,7 @@ export const CHANGELOG = {
 };
 
 // 获取当前版本
-export const CURRENT_VERSION = '3.0.1';
+export const CURRENT_VERSION = '3.0.3';
 
 // 获取版本类型的中文名称
 export const getVersionTypeName = (type) => {
