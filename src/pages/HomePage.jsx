@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import { MessageSquare, Calendar, ChevronRight } from 'lucide-react';
+import { MessageSquare, Calendar } from 'lucide-react';
 
 const HomePage = ({ onNavigate }) => {
-  const [showMore, setShowMore] = useState(false);
-
   // 所有工具
   const allTools = [
     {
@@ -21,12 +19,15 @@ const HomePage = ({ onNavigate }) => {
     // 可以继续添加更多工具
   ];
 
-  // 最近使用（从 localStorage 读取）
+  // 最近使用（从 localStorage 读取，最多5个）
   const getRecentTools = () => {
     const recent = localStorage.getItem('recentTools');
     if (!recent) return [];
     const ids = JSON.parse(recent);
-    return ids.map((id) => allTools.find((t) => t.id === id)).filter(Boolean);
+    return ids
+      .slice(0, 5)
+      .map((id) => allTools.find((t) => t.id === id))
+      .filter(Boolean);
   };
 
   const [recentTools] = useState(getRecentTools());
@@ -41,24 +42,8 @@ const HomePage = ({ onNavigate }) => {
     onNavigate(toolId);
   };
 
-  const displayTools = showMore ? allTools : allTools.slice(0, 5);
-
   return (
     <div className="min-h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900 pb-16">
-      {/* 顶部状态栏 */}
-      <div className="px-4 py-2 text-xs flex justify-between items-center bg-[#1e293b] text-white border-b shadow-sm">
-        <div className="flex items-center gap-2">
-          <div className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-          </div>
-          <span className="font-medium tracking-wide">服务器连接正常</span>
-        </div>
-        <div className="flex items-center gap-2 font-mono px-2 py-0.5 rounded bg-black/20 text-gray-400">
-          <span>在线运行</span>
-        </div>
-      </div>
-
       {/* 头部 */}
       <div className="bg-white border-b border-gray-200 shadow-sm">
         <div className="px-5 pt-5 pb-4">
@@ -76,7 +61,7 @@ const HomePage = ({ onNavigate }) => {
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-sm font-bold text-gray-700">最近使用</h2>
               </div>
-              <div className="grid grid-cols-4 gap-3">
+              <div className="grid grid-cols-5 gap-3">
                 {recentTools.map((tool) => {
                   const Icon = tool.icon;
                   return (
@@ -100,25 +85,13 @@ const HomePage = ({ onNavigate }) => {
             </div>
           )}
 
-          {/* 工具 */}
+          {/* 所有工具 */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-bold text-gray-700">工具</h2>
-              {allTools.length > 5 && (
-                <button
-                  onClick={() => setShowMore(!showMore)}
-                  className="text-xs text-blue-600 font-bold flex items-center gap-1 hover:underline"
-                >
-                  {showMore ? '收起' : '更多'}
-                  <ChevronRight
-                    size={14}
-                    className={`transition-transform ${showMore ? 'rotate-90' : ''}`}
-                  />
-                </button>
-              )}
+              <h2 className="text-sm font-bold text-gray-700">所有工具</h2>
             </div>
             <div className="grid grid-cols-4 gap-3">
-              {displayTools.map((tool) => {
+              {allTools.map((tool) => {
                 const Icon = tool.icon;
                 return (
                   <button

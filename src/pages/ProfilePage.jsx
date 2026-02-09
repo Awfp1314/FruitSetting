@@ -1,5 +1,4 @@
 import { Settings, Info, Github, Heart, Download } from 'lucide-react';
-import StatusBar from '../components/StatusBar';
 
 const ProfilePage = () => {
   const menuItems = [
@@ -25,8 +24,6 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900 pb-16">
-      <StatusBar isOnline={true} latency={24} />
-
       {/* 头部 */}
       <div className="bg-white border-b border-gray-200 shadow-sm">
         <div className="px-5 pt-5 pb-4">
@@ -38,19 +35,6 @@ const ProfilePage = () => {
       {/* 内容 */}
       <div className="flex-1 overflow-y-auto p-4">
         <div className="max-w-2xl mx-auto space-y-4">
-          {/* 用户信息卡片 */}
-          <div className="bg-white border border-gray-200 shadow-sm rounded-lg p-5">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white text-2xl font-black shadow-lg">
-                王
-              </div>
-              <div>
-                <h2 className="text-lg font-bold text-gray-900">老王</h2>
-                <p className="text-xs text-gray-500">小生意人 · 工具使用者</p>
-              </div>
-            </div>
-          </div>
-
           {/* 功能菜单 */}
           <div className="bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden">
             {menuItems.map((item, index) => {

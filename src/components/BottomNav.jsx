@@ -1,9 +1,8 @@
-import { Home, Wrench, User } from 'lucide-react';
+import { Home, User } from 'lucide-react';
 
 const BottomNav = ({ currentPage, onNavigate }) => {
   const navItems = [
     { id: 'home', label: '首页', icon: Home },
-    { id: 'tools', label: '工具', icon: Wrench },
     { id: 'profile', label: '我的', icon: User },
   ];
 

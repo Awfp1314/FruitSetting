@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import HomePage from './pages/HomePage';
-import ToolsPage from './pages/ToolsPage';
 import ProfilePage from './pages/ProfilePage';
 import FruitPromoPage from './pages/FruitPromoPage';
 import MarketCalendarPage from './pages/MarketCalendarPage';
@@ -15,18 +14,18 @@ const App = () => {
   };
 
   const handleBack = () => {
-    // 从工具页面返回到工具列表
-    setCurrentPage('tools');
-    window.history.pushState({ page: 'tools' }, '', '#tools');
+    // 从工具页面返回到首页
+    setCurrentPage('home');
+    window.history.pushState({ page: 'home' }, '', '#home');
   };
 
   useEffect(() => {
     const handlePopState = (event) => {
-      // 如果在工具详情页，返回到工具列表
+      // 如果在工具详情页，返回到首页
       if (currentPage === 'fruit-promo' || currentPage === 'market-calendar') {
-        setCurrentPage('tools');
+        setCurrentPage('home');
       }
-      // 如果在主要页面（home/tools/profile），允许退出
+      // 如果在主要页面（home/profile），允许退出
       else {
         window.history.back();
       }
@@ -36,7 +35,7 @@ const App = () => {
 
     // 初始化路由
     const hash = window.location.hash.slice(1);
-    if (['home', 'tools', 'profile', 'fruit-promo', 'market-calendar'].includes(hash)) {
+    if (['home', 'profile', 'fruit-promo', 'market-calendar'].includes(hash)) {
       setCurrentPage(hash);
     } else {
       window.history.replaceState({ page: 'home' }, '', '#home');
@@ -48,12 +47,11 @@ const App = () => {
   }, [currentPage]);
 
   // 判断是否显示底部导航
-  const showBottomNav = ['home', 'tools', 'profile'].includes(currentPage);
+  const showBottomNav = ['home', 'profile'].includes(currentPage);
 
   return (
     <>
       {currentPage === 'home' && <HomePage onNavigate={handleNavigate} />}
-      {currentPage === 'tools' && <ToolsPage onNavigate={handleNavigate} />}
       {currentPage === 'profile' && <ProfilePage />}
       {currentPage === 'fruit-promo' && <FruitPromoPage onBack={handleBack} />}
       {currentPage === 'market-calendar' && <MarketCalendarPage onBack={handleBack} />}
