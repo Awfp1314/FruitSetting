@@ -7,10 +7,13 @@ import AccountPage from './pages/AccountPage';
 import AddAccountPage from './pages/AddAccountPage';
 import AddInventoryPage from './pages/AddInventoryPage';
 import BottomNav from './components/BottomNav';
+import UpdateModal from './components/UpdateModal';
+import { useVersionCheck } from './hooks/useVersionCheck';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('home');
   const [pageParams, setPageParams] = useState(null);
+  const { showUpdateModal, newVersion, closeUpdateModal } = useVersionCheck();
 
   const handleNavigate = (pageId, params = null) => {
     setCurrentPage(pageId);
@@ -83,6 +86,9 @@ const App = () => {
       {currentPage === 'account-add-inventory' && <AddInventoryPage onBack={handleBack} />}
 
       {showBottomNav && <BottomNav currentPage={currentPage} onNavigate={handleNavigate} />}
+
+      {/* 版本更新弹窗 */}
+      {showUpdateModal && <UpdateModal version={newVersion} onClose={closeUpdateModal} />}
     </>
   );
 };
