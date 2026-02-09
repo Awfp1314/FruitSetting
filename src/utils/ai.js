@@ -10,6 +10,8 @@ export const streamAI = async (message, onMessage) => {
   const timeoutId = setTimeout(() => controller.abort(), 30000); // 30秒超时
 
   try {
+    console.log('开始 AI 请求...');
+
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: {
@@ -38,6 +40,7 @@ export const streamAI = async (message, onMessage) => {
     });
 
     clearTimeout(timeoutId);
+    console.log('收到响应，状态:', response.status);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -45,26 +48,44 @@ export const streamAI = async (message, onMessage) => {
       throw new Error(`API 服务异常 (${response.status})`);
     }
 
+    if (!response.body) {
+      throw new Error('响应体为空');
+    }
+
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let fullText = '';
+    let chunkCount = 0;
+
+    console.log('开始读取流式数据...');
 
     while (true) {
       const { done, value } = await reader.read();
-      if (done) break;
 
-      const chunk = decoder.decode(value);
+      if (done) {
+        console.log('流式数据读取完成，共', chunkCount, '个块');
+        break;
+      }
+
+      chunkCount++;
+      const chunk = decoder.decode(value, { stream: true });
       const lines = chunk.split('\n');
 
       for (const line of lines) {
         if (line.startsWith('data: ')) {
           const data = line.slice(6).trim();
-          if (data === '[DONE]') continue;
+
+          if (data === '[DONE]') {
+            console.log('收到 [DONE] 标记');
+            continue;
+          }
+
           if (!data) continue;
 
           try {
             const json = JSON.parse(data);
             const content = json.choices[0]?.delta?.content || '';
+
             if (content) {
               fullText += content;
               onMessage(fullText);
@@ -76,6 +97,8 @@ export const streamAI = async (message, onMessage) => {
       }
     }
 
+    console.log('最终文本长度:', fullText.length);
+
     if (!fullText) {
       throw new Error('AI 没有返回内容，请稍后重试');
     }
@@ -85,6 +108,7 @@ export const streamAI = async (message, onMessage) => {
     clearTimeout(timeoutId);
 
     if (error.name === 'AbortError') {
+      console.error('请求超时');
       throw new Error('请求超时，请检查网络连接');
     }
 
