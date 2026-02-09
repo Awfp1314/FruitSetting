@@ -3,6 +3,15 @@
 // type: 'major' | 'minor' | 'patch'
 
 export const CHANGELOG = {
+  '2.3.1': {
+    date: '2026-02-09',
+    type: 'patch',
+    title: '编辑功能支持修改框数，地点使用下拉框选择',
+    changes: [
+      '✨ 编辑功能支持修改框数，地点使用下拉框选择',
+      '✨ 实现记账记录编辑功能并修复返回逻辑',
+    ],
+  },
   '2.3.0': {
     date: '2026-02-09',
     type: 'minor',
@@ -75,7 +84,7 @@ export const CHANGELOG = {
 };
 
 // 获取当前版本
-export const CURRENT_VERSION = '2.3.0';
+export const CURRENT_VERSION = '2.3.1';
 
 // 获取版本类型的中文名称
 export const getVersionTypeName = (type) => {
