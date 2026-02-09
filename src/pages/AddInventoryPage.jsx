@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { ArrowLeft, Save } from 'lucide-react';
-import StatusBar from '../components/StatusBar';
 import { useAccountData } from '../hooks/useAccountData';
 import { useToast } from '../components/Toast';
 
@@ -25,116 +24,117 @@ const AddInventoryPage = ({ onBack }) => {
       showToast('请填写所有信息', 'error');
       return;
     }
-
-    const record = {
+    addInventory({
       date: formData.date,
       fruit: formData.fruit,
       boxes: parseFloat(formData.boxes),
       pricePerBox: parseFloat(formData.pricePerBox),
       totalCost,
-    };
-
-    addInventory(record);
+    });
     showToast('进货记录已保存！');
     onBack();
   };
 
   return (
     <div className="min-h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900">
-      <StatusBar isOnline={true} latency={24} />
-
       {/* 头部 */}
-      <div className="bg-white sticky top-[34px] z-40 border-b border-gray-200 shadow-sm">
-        <div className="px-5 pt-5 pb-4 flex justify-between items-end">
-          <div className="flex items-center gap-3">
-            <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+      <div className="bg-white sticky top-0 z-40 shadow-sm">
+        <div className="px-4 pt-4 pb-3 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onBack}
+              className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+            >
               <ArrowLeft size={20} className="text-gray-600" />
             </button>
-            <div>
-              <h1 className="text-2xl font-black text-gray-900 leading-none mb-1">添加进货</h1>
-              <p className="text-xs text-gray-400 font-mono italic">记录拉货信息</p>
-            </div>
+            <h1 className="text-xl font-black text-gray-900">添加进货</h1>
           </div>
           <button
             onClick={handleSave}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 shadow-md active:scale-95 transition-transform"
+            className="bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow-md active:scale-95 transition-transform"
           >
-            <Save size={16} />
+            <Save size={14} />
             保存
           </button>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-10">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 pb-10">
         {/* 进货信息 */}
-        <div className="bg-white border border-gray-200 shadow-sm p-5 rounded-lg space-y-4">
-          <h3 className="text-sm font-bold text-gray-700 mb-3">进货信息</h3>
-
+        <div className="bg-white rounded-2xl p-4 space-y-3">
           <div>
-            <label className="text-xs text-gray-600 font-bold block mb-2">进货日期</label>
+            <label className="text-[11px] text-gray-500 font-bold block mb-1.5">进货日期</label>
             <input
               type="date"
               value={formData.date}
               onChange={(e) => handleChange('date', e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base"
+              className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-blue-300 transition-colors outline-none"
             />
           </div>
 
           <div>
-            <label className="text-xs text-gray-600 font-bold block mb-2">水果种类 *</label>
+            <label className="text-[11px] text-gray-500 font-bold block mb-1.5">水果种类 *</label>
             <input
               type="text"
               value={formData.fruit}
               onChange={(e) => handleChange('fruit', e.target.value)}
               placeholder="如：冰糖梨、苹果"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base"
+              className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-blue-300 transition-colors outline-none"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-gray-600 font-bold block mb-2">进货框数 *</label>
+              <label className="text-[11px] text-gray-500 font-bold block mb-1.5">进货框数 *</label>
               <input
                 type="number"
                 value={formData.boxes}
                 onChange={(e) => handleChange('boxes', e.target.value)}
                 placeholder="50"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base"
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-blue-300 transition-colors outline-none"
               />
             </div>
             <div>
-              <label className="text-xs text-gray-600 font-bold block mb-2">单价(元/框) *</label>
+              <label className="text-[11px] text-gray-500 font-bold block mb-1.5">
+                单价(元/框) *
+              </label>
               <input
                 type="number"
                 value={formData.pricePerBox}
                 onChange={(e) => handleChange('pricePerBox', e.target.value)}
                 placeholder="80"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base"
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-blue-300 transition-colors outline-none"
               />
             </div>
           </div>
         </div>
 
-        {/* 统计 */}
-        <div className="bg-gradient-to-br from-blue-500 to-cyan-500 shadow-lg p-5 rounded-lg text-white">
-          <h3 className="text-sm font-bold mb-4 opacity-90">进货统计</h3>
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-sm opacity-90">总框数</span>
-              <span className="text-xl font-black">{formData.boxes || 0} 框</span>
+        {/* 进货统计 */}
+        <div className="bg-gradient-to-br from-blue-400 via-blue-500 to-cyan-500 rounded-2xl shadow-lg p-4 text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full -mr-8 -mt-8"></div>
+          <h3 className="text-xs font-bold mb-3 opacity-80">进货统计</h3>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-white/15 rounded-xl p-3">
+              <p className="text-[10px] opacity-80 mb-1">总框数</p>
+              <p className="text-xl font-black">{formData.boxes || 0} 框</p>
             </div>
-            <div className="flex justify-between items-center pt-2 border-t border-white/20">
-              <span className="text-base font-bold">总成本</span>
-              <span className="text-2xl font-black">¥{totalCost}</span>
+            <div className="bg-white/15 rounded-xl p-3">
+              <p className="text-[10px] opacity-80 mb-1">总成本</p>
+              <p className="text-xl font-black">¥{totalCost}</p>
             </div>
           </div>
         </div>
 
         {/* 提示 */}
-        <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-          <p className="text-xs text-blue-700 leading-relaxed">
-            💡 进货后可以在"销售记录"中记录每天卖了多少，系统会自动扣减库存并计算利润。
-          </p>
+        <div className="bg-white rounded-2xl p-4">
+          <div className="flex items-start gap-2.5">
+            <div className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span className="text-xs">💡</span>
+            </div>
+            <p className="text-xs text-gray-500 leading-relaxed">
+              进货后可以在"销售记录"中记录每天卖了多少，系统会自动扣减库存并计算利润。
+            </p>
+          </div>
         </div>
       </div>
     </div>

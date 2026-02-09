@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Plus, TrendingUp, DollarSign, Package, Box } from 'lucide-react';
-import StatusBar from '../components/StatusBar';
+import { Plus, TrendingUp, DollarSign, Package, Box, ArrowLeft } from 'lucide-react';
 import RecordActions from '../components/RecordActions';
 import EditSaleModal from '../components/EditSaleModal';
 import EditInventoryModal from '../components/EditInventoryModal';
@@ -19,7 +18,7 @@ const AccountPage = ({ onNavigate }) => {
     getTotalStock,
     getActiveInventory,
   } = useAccountData();
-  const [activeTab, setActiveTab] = useState('sales'); // sales | inventory
+  const [activeTab, setActiveTab] = useState('sales');
   const [editingSale, setEditingSale] = useState(null);
   const [editingInventory, setEditingInventory] = useState(null);
   const { showToast, showConfirm } = useToast();
@@ -57,22 +56,37 @@ const AccountPage = ({ onNavigate }) => {
 
   return (
     <div className="min-h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900 pb-16">
-      <StatusBar isOnline={true} latency={24} />
-
-      {/* 头部 */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="px-5 pt-5 pb-4">
-          <h1 className="text-2xl font-black text-gray-900 leading-none mb-1">记账本</h1>
-          <p className="text-xs text-gray-400 font-mono italic">进货和销售管理</p>
+      {/* 头部 + 标签页 */}
+      <div className="bg-white shadow-sm">
+        <div className="px-4 pt-4 pb-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => onNavigate('home')}
+              className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <ArrowLeft size={20} className="text-gray-600" />
+            </button>
+            <h1 className="text-xl font-black text-gray-900">记账本</h1>
+          </div>
+          <button
+            onClick={() =>
+              onNavigate(activeTab === 'sales' ? 'account-add-sale' : 'account-add-inventory')
+            }
+            className={`${
+              activeTab === 'sales' ? 'bg-orange-500' : 'bg-blue-500'
+            } text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow-md active:scale-95 transition-transform`}
+          >
+            <Plus size={14} />
+            {activeTab === 'sales' ? '记销售' : '添进货'}
+          </button>
         </div>
 
-        {/* 标签页 */}
-        <div className="flex border-t border-gray-200">
+        <div className="flex">
           <button
             onClick={() => setActiveTab('sales')}
-            className={`flex-1 py-3 text-sm font-bold transition-colors ${
+            className={`flex-1 py-2.5 text-sm font-bold transition-colors ${
               activeTab === 'sales'
-                ? 'bg-orange-50 border-b-2 border-orange-500 text-orange-600'
+                ? 'border-b-2 border-orange-500 text-orange-600'
                 : 'text-gray-400'
             }`}
           >
@@ -80,9 +94,9 @@ const AccountPage = ({ onNavigate }) => {
           </button>
           <button
             onClick={() => setActiveTab('inventory')}
-            className={`flex-1 py-3 text-sm font-bold transition-colors ${
+            className={`flex-1 py-2.5 text-sm font-bold transition-colors ${
               activeTab === 'inventory'
-                ? 'bg-blue-50 border-b-2 border-blue-500 text-blue-600'
+                ? 'border-b-2 border-blue-500 text-blue-600'
                 : 'text-gray-400'
             }`}
           >
@@ -91,77 +105,68 @@ const AccountPage = ({ onNavigate }) => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {activeTab === 'sales' ? (
           <>
             {/* 本月统计 */}
-            <div className="bg-gradient-to-br from-orange-500 to-red-500 shadow-lg p-5 rounded-lg text-white">
-              <h2 className="text-sm font-bold mb-4 opacity-90">本月统计</h2>
-              <div className="grid grid-cols-3 gap-4">
-                <div>
+            <div className="bg-gradient-to-br from-orange-400 via-orange-500 to-red-500 rounded-2xl shadow-lg p-4 text-white relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-10 -mt-10"></div>
+              <h2 className="text-xs font-bold mb-3 opacity-80">本月统计</h2>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-white/15 rounded-xl p-2.5">
                   <div className="flex items-center gap-1 mb-1 opacity-80">
-                    <DollarSign size={14} />
-                    <span className="text-xs">收入</span>
+                    <DollarSign size={12} />
+                    <span className="text-[10px]">收入</span>
                   </div>
-                  <p className="text-xl font-black">¥{stats.totalIncome}</p>
+                  <p className="text-base font-black">¥{stats.totalIncome}</p>
                 </div>
-                <div>
+                <div className="bg-white/15 rounded-xl p-2.5">
                   <div className="flex items-center gap-1 mb-1 opacity-80">
-                    <TrendingUp size={14} />
-                    <span className="text-xs">利润</span>
+                    <TrendingUp size={12} />
+                    <span className="text-[10px]">利润</span>
                   </div>
-                  <p className="text-xl font-black">¥{stats.totalProfit}</p>
+                  <p className="text-base font-black">¥{stats.totalProfit}</p>
                 </div>
-                <div>
+                <div className="bg-white/15 rounded-xl p-2.5">
                   <div className="flex items-center gap-1 mb-1 opacity-80">
-                    <Package size={14} />
-                    <span className="text-xs">记录</span>
+                    <Package size={12} />
+                    <span className="text-[10px]">记录</span>
                   </div>
-                  <p className="text-xl font-black">{stats.saleCount}笔</p>
+                  <p className="text-base font-black">{stats.saleCount}笔</p>
                 </div>
               </div>
             </div>
 
-            {/* 快捷操作 */}
-            <button
-              onClick={() => onNavigate('account-add-sale')}
-              className="w-full bg-orange-500 text-white py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-transform"
-            >
-              <Plus size={24} />
-              记今天销售
-            </button>
-
             {/* 销售记录列表 */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               {sales.length === 0 ? (
-                <div className="bg-white border border-gray-200 p-8 rounded-lg text-center">
-                  <p className="text-gray-400 mb-2">还没有销售记录</p>
-                  <p className="text-xs text-gray-500">先添加进货，再记录销售</p>
+                <div className="bg-white p-10 rounded-2xl text-center">
+                  <Package size={40} className="mx-auto text-gray-300 mb-3" />
+                  <p className="text-gray-400 text-sm mb-1">还没有销售记录</p>
+                  <p className="text-xs text-gray-400">先添加进货，再记录销售</p>
                 </div>
               ) : (
                 sales.map((sale) => (
-                  <div
-                    key={sale.id}
-                    className="bg-white border border-gray-200 shadow-sm p-4 rounded-lg"
-                  >
+                  <div key={sale.id} className="bg-white rounded-xl p-4">
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-base font-bold text-gray-900">{sale.fruit}</span>
-                          <span className="text-xs text-gray-500">{sale.location}</span>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="text-sm font-bold text-gray-900">{sale.fruit}</span>
+                          <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">
+                            {sale.location}
+                          </span>
                         </div>
-                        <p className="text-xs text-gray-400">{sale.date}</p>
-                      </div>
-                      <div className="text-right">
-                        <p
-                          className={`text-lg font-black ${
-                            sale.profit >= 0 ? 'text-green-600' : 'text-red-600'
-                          }`}
-                        >
-                          {sale.profit >= 0 ? '+' : ''}¥{sale.profit}
+                        <p className="text-[11px] text-gray-400">
+                          {sale.date} · {sale.sellBoxes}框
                         </p>
-                        <p className="text-xs text-gray-500">卖了 {sale.sellBoxes} 框</p>
                       </div>
+                      <p
+                        className={`text-base font-black ${
+                          sale.profit >= 0 ? 'text-green-600' : 'text-red-600'
+                        }`}
+                      >
+                        {sale.profit >= 0 ? '+' : ''}¥{sale.profit}
+                      </p>
                     </div>
                     <RecordActions
                       onEdit={() => setEditingSale(sale)}
@@ -175,79 +180,84 @@ const AccountPage = ({ onNavigate }) => {
         ) : (
           <>
             {/* 库存概览 */}
-            <div className="bg-gradient-to-br from-blue-500 to-cyan-500 shadow-lg p-5 rounded-lg text-white">
-              <h2 className="text-sm font-bold mb-4 opacity-90">当前库存</h2>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Box size={32} />
+            <div className="bg-gradient-to-br from-blue-400 via-blue-500 to-cyan-500 rounded-2xl shadow-lg p-4 text-white relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-10 -mt-10"></div>
+              <h2 className="text-xs font-bold mb-3 opacity-80">当前库存</h2>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-white/15 rounded-xl p-3 flex items-center gap-3">
+                  <Box size={28} className="opacity-80" />
                   <div>
-                    <p className="text-xs opacity-80">总剩余</p>
-                    <p className="text-3xl font-black">{totalStock}</p>
+                    <p className="text-[10px] opacity-80">总剩余</p>
+                    <p className="text-2xl font-black">{totalStock}框</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs opacity-80">活跃批次</p>
-                  <p className="text-2xl font-black">{activeInventory.length}</p>
+                <div className="bg-white/15 rounded-xl p-3 flex items-center gap-3">
+                  <Package size={28} className="opacity-80" />
+                  <div>
+                    <p className="text-[10px] opacity-80">活跃批次</p>
+                    <p className="text-2xl font-black">{activeInventory.length}批</p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* 添加进货按钮 */}
-            <button
-              onClick={() => onNavigate('account-add-inventory')}
-              className="w-full bg-blue-500 text-white py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-transform"
-            >
-              <Plus size={24} />
-              添加进货
-            </button>
-
             {/* 库存列表 */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               {inventory.length === 0 ? (
-                <div className="bg-white border border-gray-200 p-8 rounded-lg text-center">
-                  <p className="text-gray-400 mb-2">还没有进货记录</p>
-                  <button
-                    onClick={() => onNavigate('account-add-inventory')}
-                    className="text-blue-600 font-bold text-sm"
-                  >
-                    点击"添加进货"开始
-                  </button>
+                <div className="bg-white p-10 rounded-2xl text-center">
+                  <Box size={40} className="mx-auto text-gray-300 mb-3" />
+                  <p className="text-gray-400 text-sm mb-1">还没有进货记录</p>
+                  <p className="text-xs text-gray-400">点击右上角"添进货"开始</p>
                 </div>
               ) : (
                 inventory.map((inv) => {
                   const hasSales = sales.some((s) => s.inventoryId === inv.id);
+                  const percent =
+                    inv.boxes > 0 ? Math.round((inv.remainBoxes / inv.boxes) * 100) : 0;
                   return (
                     <div
                       key={inv.id}
-                      className={`bg-white border shadow-sm p-4 rounded-lg ${
-                        inv.status === 'active' ? 'border-blue-200' : 'border-gray-200 opacity-60'
+                      className={`bg-white rounded-xl p-4 ${
+                        inv.status !== 'active' ? 'opacity-50' : ''
                       }`}
                     >
                       <div className="flex justify-between items-start mb-2">
                         <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-base font-bold text-gray-900">{inv.fruit}</span>
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <span className="text-sm font-bold text-gray-900">{inv.fruit}</span>
                             {inv.status === 'active' ? (
-                              <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-bold">
+                              <span className="bg-green-100 text-green-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
                                 在售
                               </span>
                             ) : (
-                              <span className="bg-gray-100 text-gray-500 text-xs px-2 py-0.5 rounded-full font-bold">
-                                已售完
+                              <span className="bg-gray-100 text-gray-500 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                                售完
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-gray-400">{inv.date} 进货</p>
+                          <p className="text-[11px] text-gray-400">
+                            {inv.date} · ¥{inv.pricePerBox}/框 · 成本¥{inv.totalCost}
+                          </p>
                         </div>
                         <div className="text-right">
-                          <p className="text-lg font-black text-gray-900">
-                            {inv.remainBoxes}/{inv.boxes} 框
+                          <p className="text-base font-black text-gray-900">
+                            {inv.remainBoxes}/{inv.boxes}
                           </p>
-                          <p className="text-xs text-gray-500">¥{inv.pricePerBox}/框</p>
+                          <p className="text-[10px] text-gray-400">框</p>
                         </div>
                       </div>
-                      <div className="bg-gray-50 px-3 py-2 rounded text-xs text-gray-600">
-                        总成本：¥{inv.totalCost}
+                      {/* 库存进度条 */}
+                      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-2">
+                        <div
+                          className={`h-full rounded-full transition-all ${
+                            percent > 50
+                              ? 'bg-blue-500'
+                              : percent > 20
+                                ? 'bg-orange-500'
+                                : 'bg-red-500'
+                          }`}
+                          style={{ width: `${percent}%` }}
+                        ></div>
                       </div>
                       <RecordActions
                         onEdit={() => setEditingInventory(inv)}
@@ -255,8 +265,8 @@ const AccountPage = ({ onNavigate }) => {
                         canDelete={!hasSales}
                       />
                       {hasSales && (
-                        <p className="text-xs text-red-500 mt-2 text-center">
-                          该进货有关联销售记录，无法删除
+                        <p className="text-[10px] text-gray-400 mt-1.5 text-center">
+                          有关联销售记录，无法删除
                         </p>
                       )}
                     </div>
@@ -268,7 +278,6 @@ const AccountPage = ({ onNavigate }) => {
         )}
       </div>
 
-      {/* 编辑弹窗 */}
       {editingSale && (
         <EditSaleModal
           sale={editingSale}
