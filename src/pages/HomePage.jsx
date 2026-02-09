@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MessageSquare, Calendar } from 'lucide-react';
+import { MessageSquare, Calendar, BookOpen } from 'lucide-react';
 
 const HomePage = ({ onNavigate }) => {
   // 所有工具
@@ -9,6 +9,12 @@ const HomePage = ({ onNavigate }) => {
       name: '赶集日历',
       icon: Calendar,
       color: 'from-blue-500 to-cyan-500',
+    },
+    {
+      id: 'account',
+      name: '记账本',
+      icon: BookOpen,
+      color: 'from-green-500 to-emerald-500',
     },
     {
       id: 'fruit-promo',

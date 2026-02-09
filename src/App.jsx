@@ -3,27 +3,38 @@ import HomePage from './pages/HomePage';
 import ProfilePage from './pages/ProfilePage';
 import FruitPromoPage from './pages/FruitPromoPage';
 import MarketCalendarPage from './pages/MarketCalendarPage';
+import AccountPage from './pages/AccountPage';
+import AddAccountPage from './pages/AddAccountPage';
 import BottomNav from './components/BottomNav';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('home');
+  const [pageParams, setPageParams] = useState(null);
 
-  const handleNavigate = (pageId) => {
+  const handleNavigate = (pageId, params = null) => {
     setCurrentPage(pageId);
-    window.history.pushState({ page: pageId }, '', `#${pageId}`);
+    setPageParams(params);
+    window.history.pushState({ page: pageId, params }, '', `#${pageId}`);
   };
 
   const handleBack = () => {
     // 从工具页面返回到首页
     setCurrentPage('home');
+    setPageParams(null);
     window.history.pushState({ page: 'home' }, '', '#home');
   };
 
   useEffect(() => {
     const handlePopState = (event) => {
       // 如果在工具详情页，返回到首页
-      if (currentPage === 'fruit-promo' || currentPage === 'market-calendar') {
+      if (
+        currentPage === 'fruit-promo' ||
+        currentPage === 'market-calendar' ||
+        currentPage === 'account' ||
+        currentPage === 'account-add'
+      ) {
         setCurrentPage('home');
+        setPageParams(null);
       }
       // 如果在主要页面（home/profile），允许退出
       else {
@@ -35,7 +46,9 @@ const App = () => {
 
     // 初始化路由
     const hash = window.location.hash.slice(1);
-    if (['home', 'profile', 'fruit-promo', 'market-calendar'].includes(hash)) {
+    if (
+      ['home', 'profile', 'fruit-promo', 'market-calendar', 'account', 'account-add'].includes(hash)
+    ) {
       setCurrentPage(hash);
     } else {
       window.history.replaceState({ page: 'home' }, '', '#home');
@@ -55,6 +68,8 @@ const App = () => {
       {currentPage === 'profile' && <ProfilePage />}
       {currentPage === 'fruit-promo' && <FruitPromoPage onBack={handleBack} />}
       {currentPage === 'market-calendar' && <MarketCalendarPage onBack={handleBack} />}
+      {currentPage === 'account' && <AccountPage onNavigate={handleNavigate} />}
+      {currentPage === 'account-add' && <AddAccountPage onBack={handleBack} />}
 
       {showBottomNav && <BottomNav currentPage={currentPage} onNavigate={handleNavigate} />}
     </>
