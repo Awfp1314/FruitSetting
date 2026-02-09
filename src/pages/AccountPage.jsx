@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Plus, TrendingUp, DollarSign, Package, Box } from 'lucide-react';
 import StatusBar from '../components/StatusBar';
 import RecordActions from '../components/RecordActions';
+import EditSaleModal from '../components/EditSaleModal';
+import EditInventoryModal from '../components/EditInventoryModal';
 import { useAccountData } from '../hooks/useAccountData';
 
 const AccountPage = ({ onNavigate }) => {
@@ -10,11 +12,15 @@ const AccountPage = ({ onNavigate }) => {
     sales,
     deleteSale,
     deleteInventory,
+    updateSale,
+    updateInventory,
     getStats,
     getTotalStock,
     getActiveInventory,
   } = useAccountData();
   const [activeTab, setActiveTab] = useState('sales'); // sales | inventory
+  const [editingSale, setEditingSale] = useState(null);
+  const [editingInventory, setEditingInventory] = useState(null);
 
   const handleDeleteSale = (id) => {
     if (confirm('确定要删除这条销售记录吗？删除后会恢复对应的库存。')) {
@@ -29,6 +35,16 @@ const AccountPage = ({ onNavigate }) => {
     } else if (confirm('确定要删除这条进货记录吗？')) {
       // 已经删除了
     }
+  };
+
+  const handleSaveSale = (updates) => {
+    updateSale(editingSale.id, updates);
+    setEditingSale(null);
+  };
+
+  const handleSaveInventory = (updates) => {
+    updateInventory(editingInventory.id, updates);
+    setEditingInventory(null);
   };
 
   const stats = getStats(30);
@@ -144,7 +160,7 @@ const AccountPage = ({ onNavigate }) => {
                       </div>
                     </div>
                     <RecordActions
-                      onEdit={() => alert('编辑功能开发中...')}
+                      onEdit={() => setEditingSale(sale)}
                       onDelete={() => handleDeleteSale(sale.id)}
                     />
                   </div>
@@ -230,7 +246,7 @@ const AccountPage = ({ onNavigate }) => {
                         总成本：¥{inv.totalCost}
                       </div>
                       <RecordActions
-                        onEdit={() => alert('编辑功能开发中...')}
+                        onEdit={() => setEditingInventory(inv)}
                         onDelete={() => handleDeleteInventory(inv.id)}
                         canDelete={!hasSales}
                       />
@@ -247,6 +263,22 @@ const AccountPage = ({ onNavigate }) => {
           </>
         )}
       </div>
+
+      {/* 编辑弹窗 */}
+      {editingSale && (
+        <EditSaleModal
+          sale={editingSale}
+          onSave={handleSaveSale}
+          onClose={() => setEditingSale(null)}
+        />
+      )}
+      {editingInventory && (
+        <EditInventoryModal
+          inventory={editingInventory}
+          onSave={handleSaveInventory}
+          onClose={() => setEditingInventory(null)}
+        />
+      )}
     </div>
   );
 };

@@ -22,10 +22,18 @@ const App = () => {
   };
 
   const handleBack = () => {
-    // 从工具页面返回到首页
-    setCurrentPage('home');
-    setPageParams(null);
-    window.history.pushState({ page: 'home' }, '', '#home');
+    // 从记账相关页面返回到记账本
+    if (currentPage === 'account-add-sale' || currentPage === 'account-add-inventory') {
+      setCurrentPage('account');
+      setPageParams(null);
+      window.history.pushState({ page: 'account' }, '', '#account');
+    }
+    // 从其他工具页面返回到首页
+    else {
+      setCurrentPage('home');
+      setPageParams(null);
+      window.history.pushState({ page: 'home' }, '', '#home');
+    }
   };
 
   useEffect(() => {
