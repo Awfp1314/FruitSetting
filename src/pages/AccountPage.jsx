@@ -268,6 +268,7 @@ const AccountPage = ({ onNavigate }) => {
       {editingSale && (
         <EditSaleModal
           sale={editingSale}
+          inventory={inventory.find((inv) => inv.id === editingSale.inventoryId)}
           onSave={handleSaveSale}
           onClose={() => setEditingSale(null)}
         />
@@ -275,6 +276,7 @@ const AccountPage = ({ onNavigate }) => {
       {editingInventory && (
         <EditInventoryModal
           inventory={editingInventory}
+          hasSales={sales.some((s) => s.inventoryId === editingInventory.id)}
           onSave={handleSaveInventory}
           onClose={() => setEditingInventory(null)}
         />

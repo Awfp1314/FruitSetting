@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowLeft, Save, Package } from 'lucide-react';
 import StatusBar from '../components/StatusBar';
 import { useAccountData } from '../hooks/useAccountData';
+import { MARKET_SCHEDULE } from '../constants/marketData';
 
 const AddAccountPage = ({ onBack }) => {
   const { addSale, getActiveInventory } = useAccountData();
@@ -129,13 +130,19 @@ const AddAccountPage = ({ onBack }) => {
 
               <div>
                 <label className="text-xs text-gray-600 font-bold block mb-2">地点 *</label>
-                <input
-                  type="text"
+                <select
                   value={formData.location}
                   onChange={(e) => handleChange('location', e.target.value)}
-                  placeholder="如：榆林子、县城"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base"
-                />
+                >
+                  <option value="">请选择地点</option>
+                  {MARKET_SCHEDULE.map((market) => (
+                    <option key={market.shortName} value={market.shortName}>
+                      {market.shortName}
+                    </option>
+                  ))}
+                  <option value="其他">其他</option>
+                </select>
               </div>
             </div>
 

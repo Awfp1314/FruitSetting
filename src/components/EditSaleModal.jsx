@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
+import { MARKET_SCHEDULE } from '../constants/marketData';
 
-const EditSaleModal = ({ sale, onSave, onClose }) => {
+const EditSaleModal = ({ sale, inventory, onSave, onClose }) => {
   const [formData, setFormData] = useState({
     location: sale.location,
+    sellBoxes: sale.sellBoxes,
     cash: sale.cash,
     alipay: sale.alipay,
     wechat: sale.wechat,
@@ -25,17 +27,37 @@ const EditSaleModal = ({ sale, onSave, onClose }) => {
     (parseFloat(formData.alipay) || 0) +
     (parseFloat(formData.wechat) || 0);
 
+  const sellBoxes = parseFloat(formData.sellBoxes) || 0;
+  const cost = sellBoxes * sale.costPerBox;
+  const profit = totalIncome - cost;
+
+  // 计算可用框数（原来卖的 + 库存剩余）
+  const maxBoxes = sale.sellBoxes + inventory.remainBoxes;
+
   const handleSave = () => {
+    if (sellBoxes > maxBoxes) {
+      alert(`最多只能卖 ${maxBoxes} 框（库存不足）`);
+      return;
+    }
+
     const updates = {
       location: formData.location,
+      sellBoxes,
       cash: parseFloat(formData.cash) || 0,
       alipay: parseFloat(formData.alipay) || 0,
       wechat: parseFloat(formData.wechat) || 0,
       totalIncome,
-      profit: totalIncome - sale.cost,
+      cost,
+      profit,
     };
     onSave(updates);
   };
+
+  // 获取地点列表（从赶集日历 + 自定义）
+  const locations = [
+    ...MARKET_SCHEDULE.map((m) => m.shortName),
+    '其他', // 允许自定义
+  ];
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -54,15 +76,33 @@ const EditSaleModal = ({ sale, onSave, onClose }) => {
             <p className="text-gray-600">
               {sale.fruit} · {sale.date}
             </p>
-            <p className="text-gray-500 text-xs mt-1">卖了 {sale.sellBoxes} 框</p>
+            <p className="text-gray-500 text-xs mt-1">成本 ¥{sale.costPerBox}/框</p>
           </div>
 
           <div>
             <label className="text-xs text-gray-600 font-bold block mb-2">地点</label>
-            <input
-              type="text"
+            <select
               value={formData.location}
               onChange={(e) => handleChange('location', e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base"
+            >
+              {locations.map((loc) => (
+                <option key={loc} value={loc}>
+                  {loc}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-xs text-gray-600 font-bold block mb-2">
+              卖出框数 (最多 {maxBoxes} 框)
+            </label>
+            <input
+              type="number"
+              value={formData.sellBoxes}
+              onChange={(e) => handleChange('sellBoxes', e.target.value)}
+              max={maxBoxes}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base"
             />
           </div>
@@ -97,9 +137,18 @@ const EditSaleModal = ({ sale, onSave, onClose }) => {
             />
           </div>
 
-          <div className="bg-orange-50 p-3 rounded-lg">
+          <div className="bg-orange-50 p-3 rounded-lg space-y-1">
             <p className="text-sm text-gray-600">
               总收入：<span className="font-bold text-gray-900">¥{totalIncome}</span>
+            </p>
+            <p className="text-sm text-gray-600">
+              成本：<span className="font-bold text-gray-900">¥{cost}</span>
+            </p>
+            <p className="text-sm text-gray-600">
+              利润：
+              <span className={`font-bold ${profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {profit >= 0 ? '+' : ''}¥{profit}
+              </span>
             </p>
           </div>
         </div>

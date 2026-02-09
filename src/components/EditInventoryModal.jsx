@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
 
-const EditInventoryModal = ({ inventory, onSave, onClose }) => {
+const EditInventoryModal = ({ inventory, hasSales, onSave, onClose }) => {
   const [formData, setFormData] = useState({
     fruit: inventory.fruit,
+    boxes: inventory.boxes,
     pricePerBox: inventory.pricePerBox,
   });
 
@@ -18,11 +19,27 @@ const EditInventoryModal = ({ inventory, onSave, onClose }) => {
     setFormData({ ...formData, [field]: value });
   };
 
+  const boxes = parseFloat(formData.boxes) || 0;
+  const pricePerBox = parseFloat(formData.pricePerBox) || 0;
+  const totalCost = boxes * pricePerBox;
+
+  // 计算新的剩余框数
+  const soldBoxes = inventory.boxes - inventory.remainBoxes;
+  const newRemainBoxes = boxes - soldBoxes;
+
   const handleSave = () => {
+    if (boxes < soldBoxes) {
+      alert(`总框数不能少于已售出的 ${soldBoxes} 框`);
+      return;
+    }
+
     const updates = {
       fruit: formData.fruit,
-      pricePerBox: parseFloat(formData.pricePerBox) || 0,
-      totalCost: inventory.boxes * (parseFloat(formData.pricePerBox) || 0),
+      boxes,
+      pricePerBox,
+      totalCost,
+      remainBoxes: newRemainBoxes,
+      status: newRemainBoxes <= 0 ? 'finished' : 'active',
     };
     onSave(updates);
   };
@@ -58,6 +75,19 @@ const EditInventoryModal = ({ inventory, onSave, onClose }) => {
           </div>
 
           <div>
+            <label className="text-xs text-gray-600 font-bold block mb-2">
+              总框数 (至少 {soldBoxes} 框)
+            </label>
+            <input
+              type="number"
+              value={formData.boxes}
+              onChange={(e) => handleChange('boxes', e.target.value)}
+              min={soldBoxes}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base"
+            />
+          </div>
+
+          <div>
             <label className="text-xs text-gray-600 font-bold block mb-2">单价(元/框)</label>
             <input
               type="number"
@@ -67,18 +97,22 @@ const EditInventoryModal = ({ inventory, onSave, onClose }) => {
             />
           </div>
 
-          <div className="bg-blue-50 p-3 rounded-lg">
+          <div className="bg-blue-50 p-3 rounded-lg space-y-1">
             <p className="text-sm text-gray-600">
-              总成本：
-              <span className="font-bold text-gray-900">
-                ¥{inventory.boxes * (parseFloat(formData.pricePerBox) || 0)}
-              </span>
+              总成本：<span className="font-bold text-gray-900">¥{totalCost}</span>
+            </p>
+            <p className="text-sm text-gray-600">
+              剩余框数：<span className="font-bold text-gray-900">{newRemainBoxes} 框</span>
             </p>
           </div>
 
-          <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
-            <p className="text-xs text-yellow-700">⚠️ 注意：修改单价会影响已有销售记录的利润计算</p>
-          </div>
+          {hasSales && (
+            <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+              <p className="text-xs text-yellow-700">
+                ⚠️ 注意：修改单价会影响已有销售记录的利润计算
+              </p>
+            </div>
+          )}
         </div>
 
         {/* 底部 */}
