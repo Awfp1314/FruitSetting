@@ -80,17 +80,17 @@ const MarketCalendarPage = ({ onBack }) => {
             {/* 今日集市 */}
             {todayMarkets.length > 0 ? (
               <div>
-                <div className="flex items-center gap-1.5 mb-2">
-                  <MapPin size={14} className="opacity-90" />
-                  <span className="text-xs font-bold opacity-90">今天有集</span>
+                <div className="flex items-center gap-1.5 mb-2.5">
+                  <MapPin size={16} />
+                  <span className="text-sm font-black">今天有集！</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {todayMarkets.map((market, index) => (
                     <div
                       key={index}
-                      className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-xl text-sm font-bold border border-white/20"
+                      className="bg-white text-orange-600 px-5 py-2.5 rounded-xl text-base font-black shadow-md"
                     >
-                      {market.name}
+                      📍 {market.name}
                     </div>
                   ))}
                 </div>
@@ -111,22 +111,22 @@ const MarketCalendarPage = ({ onBack }) => {
           </div>
 
           <div>
-            {nextDays.map((day, index) => {
+            {nextDays.slice(1).map((day, index) => {
               const dayMarkets = getMarketsForDay(day.lunarDay);
-              const isToday = index === 0;
               const hasMarket = dayMarkets.length > 0;
+              const isTomorrow = index === 0;
 
               return (
                 <div
                   key={index}
                   className={`flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-b-0 ${
-                    isToday ? 'bg-orange-50/50' : ''
+                    isTomorrow && hasMarket ? 'bg-blue-50/50' : ''
                   }`}
                 >
                   {/* 日期列 */}
                   <div className="w-14 flex-shrink-0 text-center">
                     <p
-                      className={`text-lg font-black leading-none ${isToday ? 'text-orange-600' : hasMarket ? 'text-gray-900' : 'text-gray-300'}`}
+                      className={`text-lg font-black leading-none ${hasMarket ? 'text-gray-900' : 'text-gray-300'}`}
                     >
                       {day.solarDate.getDate()}
                     </p>
@@ -137,18 +137,16 @@ const MarketCalendarPage = ({ onBack }) => {
 
                   {/* 分隔线 */}
                   <div
-                    className={`w-0.5 h-10 rounded-full ${isToday ? 'bg-orange-400' : hasMarket ? 'bg-blue-400' : 'bg-gray-200'}`}
+                    className={`w-0.5 h-10 rounded-full ${hasMarket ? 'bg-blue-400' : 'bg-gray-200'}`}
                   ></div>
 
                   {/* 内容列 */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className={`text-xs ${isToday ? 'text-orange-600' : 'text-gray-500'}`}>
-                        {day.lunarDateStr}
-                      </span>
-                      {isToday && (
-                        <span className="bg-orange-500 text-white text-[10px] px-1.5 py-0.5 rounded font-bold">
-                          今天
+                      <span className="text-xs text-gray-500">{day.lunarDateStr}</span>
+                      {isTomorrow && (
+                        <span className="bg-blue-500 text-white text-[10px] px-1.5 py-0.5 rounded font-bold">
+                          明天
                         </span>
                       )}
                     </div>

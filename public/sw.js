@@ -1,70 +1,74 @@
-// 再次升级版本号，强制清除之前的旧逻辑
-const CACHE_NAME = 'laowang-v5-offline-king';
+const CACHE_NAME = 'laowang-v6';
 
-// 初始必须存死的文件（App的小命都在这几个文件里）
-const CORE_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  'https://cdn.tailwindcss.com'
-];
-
-// 1. 安装阶段：强行把核心文件塞进手机硬盘
+// 安装：缓存核心文件
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('正在强制写入核心缓存...');
-      return cache.addAll(CORE_ASSETS);
+      return cache.addAll(['/', '/index.html', '/manifest.json']);
     })
   );
-  self.skipWaiting(); // 别等了，立刻上位
+  self.skipWaiting();
 });
 
-// 2. 激活阶段：把旧版本的破烂缓存全扔了
+// 激活：清理旧缓存
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) return caches.delete(key);
-        })
-      );
+      return Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)));
     })
   );
-  return self.clients.claim(); // 宣布接管所有页面
+  return self.clients.claim();
 });
 
-// 3. 拦截请求：这是最关键的“离线优先”逻辑
+// 请求拦截：网络优先，失败用缓存
 self.addEventListener('fetch', (event) => {
-  // 只管 http 类的请求
   if (!event.request.url.startsWith('http')) return;
 
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      // --- 核心逻辑 A：如果硬盘里有，直接给，一秒都不许等网络 ---
-      if (cachedResponse) {
-        return cachedResponse;
-      }
+  // 页面导航请求：网络优先
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          return response;
+        })
+        .catch(() => caches.match('/index.html'))
+    );
+    return;
+  }
 
-      // --- 核心逻辑 B：硬盘里没有，再去网上下载，下完顺手存起来 ---
-      return fetch(event.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200) {
-          return networkResponse;
-        }
-
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
+  // 静态资源：缓存优先
+  if (
+    event.request.url.includes('/assets/') ||
+    event.request.url.includes('.png') ||
+    event.request.url.includes('.ico')
+  ) {
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        if (cached) return cached;
+        return fetch(event.request).then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
         });
+      })
+    );
+    return;
+  }
 
-        return networkResponse;
-      }).catch(() => {
-        // --- 核心逻辑 C：如果断网了，且没存首页，强行返回存好的 index.html ---
-        // 这样可以防止出现你截图里的“无法访问”页面
-        if (event.request.mode === 'navigate') {
-          return caches.match('/');
+  // 其他请求：网络优先
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        if (response.ok) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
         }
-      });
-    })
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });

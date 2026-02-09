@@ -180,9 +180,9 @@ ${locationDetail ? '\n按地点：\n' + locationDetail : ''}
       {/* 悬浮按钮 */}
       <button
         onClick={handleAnalyze}
-        className="fixed bottom-20 right-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full shadow-lg px-4 py-3 text-white text-sm font-bold hover:scale-105 active:scale-95 transition-transform z-40 flex items-center gap-2"
+        className="fixed bottom-20 right-4 w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full shadow-lg text-white hover:scale-105 active:scale-95 transition-transform z-40 flex items-center justify-center"
       >
-        🤖 AI 分析
+        <span className="text-xl">🤖</span>
       </button>
 
       {/* AI 分析弹窗 */}
