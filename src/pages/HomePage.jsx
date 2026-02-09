@@ -87,116 +87,42 @@ const HomePage = ({ onNavigate }) => {
 
   return (
     <div className="min-h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900 pb-16">
-      {/* 头部 */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="px-5 pt-5 pb-4">
-          <h1 className="text-2xl font-black text-gray-900 leading-none mb-1">小王工具箱</h1>
-          <p className="text-xs text-gray-400 font-mono italic">v{CURRENT_VERSION} | 实用工具集</p>
+      {/* 顶部搜索栏 */}
+      <div className="bg-gradient-to-br from-blue-500 to-cyan-500 px-4 pt-3 pb-4">
+        <div className="flex items-center gap-3">
+          <div className="flex-1 bg-white/90 backdrop-blur rounded-full px-4 py-2 flex items-center gap-2">
+            <svg
+              className="w-4 h-4 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <span className="text-sm text-gray-400">搜索工具</span>
+          </div>
+          <div className="text-white text-xs">v{CURRENT_VERSION}</div>
         </div>
       </div>
 
       {/* 主内容 */}
-      <div className="flex-1 overflow-y-auto p-4 pb-4">
-        <div className="max-w-2xl mx-auto space-y-4">
-          {/* 数据仪表盘 */}
-          {accountStats && accountStats.hasSales && (
-            <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-xl shadow-lg p-5 text-white">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-base font-bold">生意概况</h2>
-                <button
-                  onClick={() => onNavigate('account')}
-                  className="text-xs bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full transition-colors"
-                >
-                  查看详情
-                </button>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2.5">
-                {/* 今日利润 */}
-                <div className="bg-white/10 rounded-lg p-2.5">
-                  <div className="flex items-center gap-0.5 mb-1.5 opacity-90">
-                    <TrendingUp size={12} />
-                    <span className="text-[10px] leading-tight">今日利润</span>
-                  </div>
-                  <p className="text-base font-black leading-tight">
-                    {accountStats.todayProfit >= 0 ? '+' : ''}¥{accountStats.todayProfit}
-                  </p>
-                </div>
-
-                {/* 本周收入 */}
-                <div className="bg-white/10 rounded-lg p-2.5">
-                  <div className="flex items-center gap-0.5 mb-1.5 opacity-90">
-                    <DollarSign size={12} />
-                    <span className="text-[10px] leading-tight">本周收入</span>
-                  </div>
-                  <p className="text-base font-black leading-tight">¥{accountStats.weekIncome}</p>
-                </div>
-
-                {/* 库存 */}
-                <div className="bg-white/10 rounded-lg p-2.5">
-                  <div className="flex items-center gap-0.5 mb-1.5 opacity-90">
-                    <Package size={12} />
-                    <span className="text-[10px] leading-tight whitespace-nowrap">剩余库存</span>
-                  </div>
-                  <p className="text-base font-black leading-tight">{accountStats.totalStock}框</p>
-                </div>
-              </div>
-
-              {/* 本周利润 */}
-              <div className="mt-3 pt-3 border-t border-white/20">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs opacity-90">本周利润</span>
-                  <span className="text-xl font-black">
-                    {accountStats.weekProfit >= 0 ? '+' : ''}¥{accountStats.weekProfit}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 最近使用 */}
-          {recentTools.length > 0 && (
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-bold text-gray-700">最近使用</h2>
-              </div>
-              <div className="grid grid-cols-5 gap-3">
-                {recentTools.map((tool) => {
-                  const Icon = tool.icon;
-                  return (
-                    <button
-                      key={tool.id}
-                      onClick={() => handleToolClick(tool.id)}
-                      className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all active:scale-95"
-                    >
-                      <div
-                        className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tool.color} flex items-center justify-center shadow-md`}
-                      >
-                        <Icon size={24} className="text-white" />
-                      </div>
-                      <span className="text-xs font-medium text-gray-700 text-center leading-tight">
-                        {tool.name}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* 所有工具 */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-bold text-gray-700">所有工具</h2>
-            </div>
-            <div className="grid grid-cols-4 gap-3">
-              {allTools.map((tool) => {
+      <div className="flex-1 overflow-y-auto pb-4">
+        <div className="max-w-2xl mx-auto">
+          {/* 快捷功能区 */}
+          <div className="bg-white px-4 py-4 -mt-2 rounded-t-2xl">
+            <div className="grid grid-cols-4 gap-4">
+              {allTools.slice(0, 4).map((tool) => {
                 const Icon = tool.icon;
                 return (
                   <button
                     key={tool.id}
                     onClick={() => handleToolClick(tool.id)}
-                    className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all active:scale-95"
+                    className="flex flex-col items-center gap-2 active:scale-95 transition-transform"
                   >
                     <div
                       className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tool.color} flex items-center justify-center shadow-md`}
@@ -212,11 +138,116 @@ const HomePage = ({ onNavigate }) => {
             </div>
           </div>
 
-          {/* 提示信息 */}
-          <div className="bg-white border border-gray-200 shadow-sm p-4 rounded-lg">
-            <p className="text-xs text-gray-500 text-center leading-relaxed">
-              💡 所有数据保存在本地，支持离线使用
-            </p>
+          {/* 数据仪表盘 */}
+          {accountStats && accountStats.hasSales && (
+            <div className="mx-4 mt-3">
+              <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-xl shadow-lg p-5 text-white">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-base font-bold">生意概况</h2>
+                  <button
+                    onClick={() => onNavigate('account')}
+                    className="text-xs bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full transition-colors"
+                  >
+                    查看详情
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2.5">
+                  {/* 今日利润 */}
+                  <div className="bg-white/10 rounded-lg p-2.5">
+                    <div className="flex items-center gap-0.5 mb-1.5 opacity-90">
+                      <TrendingUp size={12} />
+                      <span className="text-[10px] leading-tight">今日利润</span>
+                    </div>
+                    <p className="text-base font-black leading-tight">
+                      {accountStats.todayProfit >= 0 ? '+' : ''}¥{accountStats.todayProfit}
+                    </p>
+                  </div>
+
+                  {/* 本周收入 */}
+                  <div className="bg-white/10 rounded-lg p-2.5">
+                    <div className="flex items-center gap-0.5 mb-1.5 opacity-90">
+                      <DollarSign size={12} />
+                      <span className="text-[10px] leading-tight">本周收入</span>
+                    </div>
+                    <p className="text-base font-black leading-tight">¥{accountStats.weekIncome}</p>
+                  </div>
+
+                  {/* 库存 */}
+                  <div className="bg-white/10 rounded-lg p-2.5">
+                    <div className="flex items-center gap-0.5 mb-1.5 opacity-90">
+                      <Package size={12} />
+                      <span className="text-[10px] leading-tight whitespace-nowrap">剩余库存</span>
+                    </div>
+                    <p className="text-base font-black leading-tight">
+                      {accountStats.totalStock}框
+                    </p>
+                  </div>
+                </div>
+
+                {/* 本周利润 */}
+                <div className="mt-3 pt-3 border-t border-white/20">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs opacity-90">本周利润</span>
+                    <span className="text-xl font-black">
+                      {accountStats.weekProfit >= 0 ? '+' : ''}¥{accountStats.weekProfit}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 常用应用 */}
+          <div className="bg-white mx-4 mt-3 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-1 h-4 bg-blue-500 rounded-full"></div>
+                <h2 className="text-sm font-bold text-gray-800">常用</h2>
+              </div>
+            </div>
+            <div className="grid grid-cols-4 gap-4">
+              {allTools.map((tool) => {
+                const Icon = tool.icon;
+                return (
+                  <button
+                    key={tool.id}
+                    onClick={() => handleToolClick(tool.id)}
+                    className="flex flex-col items-center gap-2 active:scale-95 transition-transform"
+                  >
+                    <div
+                      className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tool.color} flex items-center justify-center shadow-md`}
+                    >
+                      <Icon size={24} className="text-white" />
+                    </div>
+                    <span className="text-xs font-medium text-gray-700 text-center leading-tight">
+                      {tool.name}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 提示信息卡片 */}
+          <div className="bg-white mx-4 mt-3 rounded-xl p-4 border border-gray-100">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-medium text-gray-800 mb-1">本地存储</h3>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  所有数据保存在本地，支持离线使用，保护您的隐私
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
