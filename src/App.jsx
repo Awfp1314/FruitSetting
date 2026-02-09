@@ -5,6 +5,7 @@ import FruitPromoPage from './pages/FruitPromoPage';
 import MarketCalendarPage from './pages/MarketCalendarPage';
 import AccountPage from './pages/AccountPage';
 import AddAccountPage from './pages/AddAccountPage';
+import AddInventoryPage from './pages/AddInventoryPage';
 import BottomNav from './components/BottomNav';
 
 const App = () => {
@@ -31,7 +32,8 @@ const App = () => {
         currentPage === 'fruit-promo' ||
         currentPage === 'market-calendar' ||
         currentPage === 'account' ||
-        currentPage === 'account-add'
+        currentPage === 'account-add-sale' ||
+        currentPage === 'account-add-inventory'
       ) {
         setCurrentPage('home');
         setPageParams(null);
@@ -47,7 +49,15 @@ const App = () => {
     // 初始化路由
     const hash = window.location.hash.slice(1);
     if (
-      ['home', 'profile', 'fruit-promo', 'market-calendar', 'account', 'account-add'].includes(hash)
+      [
+        'home',
+        'profile',
+        'fruit-promo',
+        'market-calendar',
+        'account',
+        'account-add-sale',
+        'account-add-inventory',
+      ].includes(hash)
     ) {
       setCurrentPage(hash);
     } else {
@@ -69,7 +79,8 @@ const App = () => {
       {currentPage === 'fruit-promo' && <FruitPromoPage onBack={handleBack} />}
       {currentPage === 'market-calendar' && <MarketCalendarPage onBack={handleBack} />}
       {currentPage === 'account' && <AccountPage onNavigate={handleNavigate} />}
-      {currentPage === 'account-add' && <AddAccountPage onBack={handleBack} />}
+      {currentPage === 'account-add-sale' && <AddAccountPage onBack={handleBack} />}
+      {currentPage === 'account-add-inventory' && <AddInventoryPage onBack={handleBack} />}
 
       {showBottomNav && <BottomNav currentPage={currentPage} onNavigate={handleNavigate} />}
     </>
