@@ -285,7 +285,6 @@ const AccountPage = ({ onNavigate }) => {
                         ></div>
                       </div>
                     </div>
-                    </div>
                   );
                 })
               )}
