@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
-import { MARKET_SCHEDULE } from '../constants/marketData';
 
 const EditSaleModal = ({ sale, inventory, onSave, onClose }) => {
   const [formData, setFormData] = useState({
@@ -11,7 +10,19 @@ const EditSaleModal = ({ sale, inventory, onSave, onClose }) => {
     wechat: sale.wechat,
   });
 
+  // 从 localStorage 读取用户的赶集日历
+  const [locations, setLocations] = useState([]);
+
   useEffect(() => {
+    const savedMarkets = localStorage.getItem('marketSchedule');
+    if (savedMarkets) {
+      const markets = JSON.parse(savedMarkets);
+      const locationList = markets.map((m) => m.shortName);
+      setLocations([...locationList, '其他']);
+    } else {
+      setLocations(['其他']);
+    }
+
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = 'unset';
@@ -52,12 +63,6 @@ const EditSaleModal = ({ sale, inventory, onSave, onClose }) => {
     };
     onSave(updates);
   };
-
-  // 获取地点列表（从赶集日历 + 自定义）
-  const locations = [
-    ...MARKET_SCHEDULE.map((m) => m.shortName),
-    '其他', // 允许自定义
-  ];
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">

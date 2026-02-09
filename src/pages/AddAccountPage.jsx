@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Save, Package } from 'lucide-react';
 import StatusBar from '../components/StatusBar';
 import { useAccountData } from '../hooks/useAccountData';
-import { MARKET_SCHEDULE } from '../constants/marketData';
 
 const AddAccountPage = ({ onBack }) => {
   const { addSale, getActiveInventory } = useAccountData();
@@ -17,6 +16,18 @@ const AddAccountPage = ({ onBack }) => {
     alipay: '',
     wechat: '',
   });
+
+  // 从 localStorage 读取用户的赶集日历
+  const [locations, setLocations] = useState([]);
+
+  useEffect(() => {
+    const savedMarkets = localStorage.getItem('marketSchedule');
+    if (savedMarkets) {
+      const markets = JSON.parse(savedMarkets);
+      const locationList = markets.map((m) => m.shortName);
+      setLocations(locationList);
+    }
+  }, []);
 
   const handleChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
@@ -136,9 +147,9 @@ const AddAccountPage = ({ onBack }) => {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base"
                 >
                   <option value="">请选择地点</option>
-                  {MARKET_SCHEDULE.map((market) => (
-                    <option key={market.shortName} value={market.shortName}>
-                      {market.shortName}
+                  {locations.map((location) => (
+                    <option key={location} value={location}>
+                      {location}
                     </option>
                   ))}
                   <option value="其他">其他</option>
