@@ -39,6 +39,9 @@ build
 # OS files
 Thumbs.db
 
+# Project context (local only, not for Git)
+PROJECT_CONTEXT.md
+
 # Lock files (optional - uncomment if you want to ignore)
 # package-lock.json
 # yarn.lock
