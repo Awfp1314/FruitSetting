@@ -89,9 +89,17 @@ ${hasMarket ? `今天有集的地方：${marketNames}` : '今天没有集市'}${
 请简洁实用，不超过200字。`;
 
     try {
+      // 使用节流来减少状态更新频率
+      let lastUpdate = 0;
+      const throttleDelay = 100; // 100ms 更新一次
+
       const finalText = await streamAI(prompt, (text) => {
-        console.log('收到文本片段，长度:', text.length);
-        setResult(text);
+        const now = Date.now();
+        if (now - lastUpdate > throttleDelay) {
+          console.log('收到文本片段，长度:', text.length);
+          setResult(text);
+          lastUpdate = now;
+        }
       });
 
       console.log('AI 分析完成，最终文本:', finalText);
