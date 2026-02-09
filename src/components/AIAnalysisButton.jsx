@@ -31,7 +31,10 @@ const AIAnalysisButton = ({ markets }) => {
         setResult(text);
       });
     } catch (error) {
-      setResult('❌ AI 分析失败，请稍后重试。');
+      console.error('AI 错误:', error);
+      setResult(
+        `❌ AI 分析失败\n\n错误信息: ${error.message}\n\n可能原因：\n1. API 服务暂时不可用\n2. 网络连接问题\n3. API Key 配额用完\n\n请稍后重试或检查控制台查看详细错误。`
+      );
     } finally {
       setLoading(false);
     }

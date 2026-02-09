@@ -11,15 +11,16 @@ export const streamAI = async (message, onMessage) => {
         Authorization: `Bearer ${API_KEY}`,
       },
       body: JSON.stringify({
-        max_tokens: 1200,
-        model: 'deepseek-chat',
+        max_tokens: 500,
+        model: 'deepseek-v3', // 正确的模型名
         temperature: 0.8,
         top_p: 1,
         presence_penalty: 1,
         messages: [
           {
             role: 'system',
-            content: '你是一个赶集助手，帮助用户分析今天是否适合赶集。请简洁明了地给出建议。',
+            content:
+              '你是一个赶集助手，帮助用户分析今天是否适合赶集。请简洁明了地给出建议，不超过150字。',
           },
           {
             role: 'user',
@@ -29,6 +30,11 @@ export const streamAI = async (message, onMessage) => {
         stream: true,
       }),
     });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`API 错误 ${response.status}: ${errorText}`);
+    }
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
@@ -43,8 +49,9 @@ export const streamAI = async (message, onMessage) => {
 
       for (const line of lines) {
         if (line.startsWith('data: ')) {
-          const data = line.slice(6);
+          const data = line.slice(6).trim();
           if (data === '[DONE]') continue;
+          if (!data) continue;
 
           try {
             const json = JSON.parse(data);
@@ -54,10 +61,14 @@ export const streamAI = async (message, onMessage) => {
               onMessage(fullText);
             }
           } catch (e) {
-            // 忽略解析错误
+            console.error('解析错误:', e, 'data:', data);
           }
         }
       }
+    }
+
+    if (!fullText) {
+      throw new Error('AI 没有返回内容');
     }
 
     return fullText;
@@ -77,15 +88,16 @@ export const callAI = async (message) => {
         Authorization: `Bearer ${API_KEY}`,
       },
       body: JSON.stringify({
-        max_tokens: 1200,
-        model: 'deepseek-chat',
+        max_tokens: 500,
+        model: 'deepseek-v3',
         temperature: 0.8,
         top_p: 1,
         presence_penalty: 1,
         messages: [
           {
             role: 'system',
-            content: '你是一个赶集助手，帮助用户分析今天是否适合赶集。请简洁明了地给出建议。',
+            content:
+              '你是一个赶集助手，帮助用户分析今天是否适合赶集。请简洁明了地给出建议，不超过150字。',
           },
           {
             role: 'user',
@@ -94,6 +106,11 @@ export const callAI = async (message) => {
         ],
       }),
     });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`API 错误 ${response.status}: ${errorText}`);
+    }
 
     const data = await response.json();
     return data.choices[0]?.message?.content || '';
