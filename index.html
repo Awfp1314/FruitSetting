@@ -2,33 +2,47 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>老王水果摊配置后台</title>
-    
-    <!-- 1. 引入 APP 身份证 -->
-    <link rel="manifest" href="/manifest.json">
-    
-    <!-- 2. 苹果手机专用图标和全屏设置 -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="老王水果">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3194/3194766.png">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta
+      name="description"
+      content="老王工具箱 - 专为小生意人打造的实用工具集，简单好用，随时随地提升工作效率"
+    />
+    <meta name="keywords" content="老王工具箱,水果促销,文案生成,小生意工具" />
+    <title>老王工具箱 - 让小生意更轻松</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Apple iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="老王工具箱" />
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3194/3194766.png" />
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://cdn-icons-png.flaticon.com/512/3194/3194766.png"
+    />
   </head>
-  <body class="bg-[#F0F2F5]">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    
-    <!-- 3. 启动离线管家 -->
+
+    <!-- Service Worker -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js');
+          navigator.serviceWorker
+            .register('/sw.js')
+            .then((reg) => console.log('✅ Service Worker 注册成功'))
+            .catch((err) => console.log('❌ Service Worker 注册失败:', err));
         });
       }
     </script>
   </body>
 </html>
-
-

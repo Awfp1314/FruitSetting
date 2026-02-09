@@ -1,24 +1,28 @@
 {
-  "name": "老王水果摊配置后台",
-  "short_name": "老王水果",
-  "description": "老王水果摊每日价格配置工具",
+  "name": "老王工具箱",
+  "short_name": "老王工具",
+  "description": "专为小生意人打造的实用工具集",
   "id": "/",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#F0F2F5",
-  "theme_color": "#ffffff",
+  "theme_color": "#f97316",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/3194/3194766.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "https://cdn-icons-png.flaticon.com/512/3194/3194766.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "categories": ["business", "productivity", "utilities"],
+  "screenshots": []
 }

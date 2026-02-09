@@ -1,12 +1,16 @@
 {
-  "name": "laowang-fruit-admin",
+  "name": "laowang-toolbox",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
+  "description": "老王工具箱 - 专为小生意人打造的实用工具集",
+  "author": "老王",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint src --ext js,jsx"
   },
   "dependencies": {
     "lucide-react": "^0.263.1",
