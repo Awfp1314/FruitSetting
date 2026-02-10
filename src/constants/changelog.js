@@ -3,6 +3,14 @@
 // type: 'major' | 'minor' | 'patch'
 
 export const CHANGELOG = {
+  '3.0.13': {
+    date: '2026-02-10',
+    type: 'patch',
+    title: '替换图标为自定义 tubiao，manifest 和 index.html 使用本地图标',
+    changes: [
+      '✨ 替换图标为自定义 tubiao，manifest 和 index.html 使用本地图标',
+    ],
+  },
   '3.0.12': {
     date: '2026-02-10',
     type: 'patch',
@@ -287,7 +295,7 @@ export const CHANGELOG = {
 };
 
 // 获取当前版本
-export const CURRENT_VERSION = '3.0.12';
+export const CURRENT_VERSION = '3.0.13';
 
 // 获取版本类型的中文名称
 export const getVersionTypeName = (type) => {
