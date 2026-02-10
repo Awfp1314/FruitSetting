@@ -7,12 +7,6 @@
     @apply antialiased;
   }
 
-  html {
-    /* 支持安全区域 */
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-
   body {
     @apply bg-gray-50 text-gray-900;
   }
@@ -32,5 +26,21 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  /* 安全区域支持 */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-area-inset {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 }
