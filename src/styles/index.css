@@ -6,7 +6,13 @@
   * {
     @apply antialiased;
   }
-  
+
+  html {
+    /* 支持安全区域 */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
   body {
     @apply bg-gray-50 text-gray-900;
   }
@@ -16,7 +22,7 @@
   .animate-in {
     animation: fadeIn 0.5s ease-out;
   }
-  
+
   @keyframes fadeIn {
     from {
       opacity: 0;
