@@ -3,6 +3,19 @@
 // type: 'major' | 'minor' | 'patch'
 
 export const CHANGELOG = {
+  '3.0.14': {
+    date: '2026-02-10',
+    type: 'patch',
+    title: '替换图标为自定义 tubiao，manifest 和 index.html 使用本地图标',
+    changes: [
+      '🐛 添加安全区域支持以适配 WebView 全屏显示',
+      '🔧 gitignore 添加 bubblewrap/TWA 相关文件，保持仓库干净',
+      '✨ 替换图标为自定义 tubiao，manifest 和 index.html 使用本地图标',
+      '🔧 gitignore 添加 android/ 目录，不上传到 Git',
+      '✨ 记账页添加"今日休息"按钮，AI分析区分出摊日和休息日',
+      '• 完善AI用户画像：正宁县山河镇松树村，补充赶集路线和生活细节',
+    ],
+  },
   '3.0.13': {
     date: '2026-02-10',
     type: 'patch',
@@ -295,7 +308,7 @@ export const CHANGELOG = {
 };
 
 // 获取当前版本
-export const CURRENT_VERSION = '3.0.13';
+export const CURRENT_VERSION = '3.0.14';
 
 // 获取版本类型的中文名称
 export const getVersionTypeName = (type) => {
