@@ -4,12 +4,34 @@ import { dataManager } from '../utils/dataManager';
 export const useAccountData = () => {
   const [inventory, setInventory] = useState([]);
   const [sales, setSales] = useState([]);
+  const [restDays, setRestDays] = useState([]);
 
   useEffect(() => {
     const data = dataManager.load();
     setInventory(data.inventory || []);
     setSales(data.sales || []);
+    setRestDays(data.restDays || []);
   }, []);
+
+  const saveAll = (inv, sal, rest) => {
+    dataManager.save({ inventory: inv, sales: sal, restDays: rest });
+  };
+
+  // 添加休息日
+  const addRestDay = (date) => {
+    const dateStr = typeof date === 'string' ? date : new Date().toISOString().split('T')[0];
+    if (restDays.includes(dateStr)) return; // 已标记过
+    const newRestDays = [dateStr, ...restDays];
+    setRestDays(newRestDays);
+    saveAll(inventory, sales, newRestDays);
+  };
+
+  // 移除休息日
+  const removeRestDay = (date) => {
+    const newRestDays = restDays.filter((d) => d !== date);
+    setRestDays(newRestDays);
+    saveAll(inventory, sales, newRestDays);
+  };
 
   // 添加进货
   const addInventory = (record) => {
@@ -22,7 +44,7 @@ export const useAccountData = () => {
     };
     const newInventory = [newRecord, ...inventory];
     setInventory(newInventory);
-    dataManager.save({ inventory: newInventory, sales });
+    saveAll(newInventory, sales, restDays);
     return newRecord;
   };
 
@@ -50,7 +72,7 @@ export const useAccountData = () => {
     const newSales = [newRecord, ...sales];
     setInventory(updatedInventory);
     setSales(newSales);
-    dataManager.save({ inventory: updatedInventory, sales: newSales });
+    saveAll(updatedInventory, newSales, restDays);
     return newRecord;
   };
 
@@ -97,7 +119,7 @@ export const useAccountData = () => {
       return inv;
     });
     setInventory(updatedInventory);
-    dataManager.save({ inventory: updatedInventory, sales });
+    saveAll(updatedInventory, sales, restDays);
   };
 
   // 删除进货记录
@@ -110,7 +132,7 @@ export const useAccountData = () => {
 
     const newInventory = inventory.filter((inv) => inv.id !== id);
     setInventory(newInventory);
-    dataManager.save({ inventory: newInventory, sales });
+    saveAll(newInventory, sales, restDays);
     return { success: true };
   };
 
@@ -133,15 +155,14 @@ export const useAccountData = () => {
         }
         return inv;
       });
+      const updatedSales = sales.map((s) => (s.id === id ? { ...s, ...updates } : s));
       setInventory(updatedInventory);
-      dataManager.save({
-        inventory: updatedInventory,
-        sales: sales.map((s) => (s.id === id ? { ...s, ...updates } : s)),
-      });
+      setSales(updatedSales);
+      saveAll(updatedInventory, updatedSales, restDays);
     } else {
       const updatedSales = sales.map((s) => (s.id === id ? { ...s, ...updates } : s));
       setSales(updatedSales);
-      dataManager.save({ inventory, sales: updatedSales });
+      saveAll(inventory, updatedSales, restDays);
     }
   };
 
@@ -166,14 +187,17 @@ export const useAccountData = () => {
     const newSales = sales.filter((s) => s.id !== id);
     setInventory(updatedInventory);
     setSales(newSales);
-    dataManager.save({ inventory: updatedInventory, sales: newSales });
+    saveAll(updatedInventory, newSales, restDays);
   };
 
   return {
     inventory,
     sales,
+    restDays,
     addInventory,
     addSale,
+    addRestDay,
+    removeRestDay,
     updateInventory,
     deleteInventory,
     updateSale,

@@ -6,7 +6,7 @@ export const collectBusinessContext = (markets = [], todayInfo = null) => {
   if (!todayInfo) todayInfo = getLunarInfo();
 
   const accountData = dataManager.load();
-  const { inventory = [], sales = [] } = accountData;
+  const { inventory = [], sales = [], restDays = [] } = accountData;
 
   // 活跃库存
   const activeInventory = inventory.filter((inv) => inv.status === 'active' && inv.remainBoxes > 0);
@@ -16,9 +16,14 @@ export const collectBusinessContext = (markets = [], todayInfo = null) => {
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   const recentSales = sales.filter((s) => new Date(s.date) >= sevenDaysAgo);
 
+  // 最近7天的休息日
+  const sevenDaysAgoStr = sevenDaysAgo.toISOString().split('T')[0];
+  const recentRestDays = restDays.filter((d) => d >= sevenDaysAgoStr);
+
   // 计算实际有销售的天数
   const saleDates = new Set(recentSales.map((s) => s.date));
   const actualSaleDays = saleDates.size;
+  const actualRestDays = recentRestDays.length;
 
   // 按地点统计
   const salesByLocation = {};
@@ -108,8 +113,9 @@ export const collectBusinessContext = (markets = [], todayInfo = null) => {
 当前库存：
 ${inventoryInfo}
 
-近期销售（7天内实际出摊${actualSaleDays}天）：
+近期销售（7天内出摊${actualSaleDays}天，休息${actualRestDays}天）：
 - 总收入：¥${totalIncome}，总利润：¥${totalProfit}，共卖出${totalBoxes}框${salesPace}
 ${salesDetail ? '\n按日期：\n' + salesDetail : ''}
-${locationDetail ? '\n按地点：\n' + locationDetail : ''}`;
+${locationDetail ? '\n按地点：\n' + locationDetail : ''}
+${recentRestDays.length > 0 ? '\n休息日：' + recentRestDays.join('、') : ''}`;
 };

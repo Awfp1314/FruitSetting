@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { Plus, TrendingUp, DollarSign, Package, Box, ArrowLeft, Edit2, Trash2 } from 'lucide-react';
+import {
+  Plus,
+  TrendingUp,
+  DollarSign,
+  Package,
+  Box,
+  ArrowLeft,
+  Edit2,
+  Trash2,
+  Coffee,
+} from 'lucide-react';
 import EditSaleModal from '../components/EditSaleModal';
 import EditInventoryModal from '../components/EditInventoryModal';
 import { useAccountData } from '../hooks/useAccountData';
@@ -9,14 +19,20 @@ const AccountPage = ({ onNavigate, onBack }) => {
   const {
     inventory,
     sales,
+    restDays,
     deleteSale,
     deleteInventory,
     updateSale,
     updateInventory,
+    addRestDay,
+    removeRestDay,
     getStats,
     getTotalStock,
     getActiveInventory,
   } = useAccountData();
+
+  const todayStr = new Date().toISOString().split('T')[0];
+  const isTodayRest = restDays.includes(todayStr);
   const [activeTab, setActiveTab] = useState('sales');
   const [editingSale, setEditingSale] = useState(null);
   const [editingInventory, setEditingInventory] = useState(null);
@@ -135,6 +151,27 @@ const AccountPage = ({ onNavigate, onBack }) => {
                 </div>
               </div>
             </div>
+
+            {/* 今日休息按钮 */}
+            <button
+              onClick={() => {
+                if (isTodayRest) {
+                  removeRestDay(todayStr);
+                  showToast('已取消今日休息');
+                } else {
+                  addRestDay(todayStr);
+                  showToast('已标记今日休息，AI分析会知道今天没出摊');
+                }
+              }}
+              className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm transition-all active:scale-[0.98] ${
+                isTodayRest
+                  ? 'bg-gray-200 text-gray-600'
+                  : 'bg-white text-orange-500 border border-orange-200'
+              }`}
+            >
+              <Coffee size={16} />
+              {isTodayRest ? '✓ 今天休息中（点击取消）' : '今日休息（没出摊）'}
+            </button>
 
             {/* 销售记录列表 */}
             <div className="space-y-2">
