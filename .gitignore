@@ -42,6 +42,9 @@ Thumbs.db
 # Project context (local only, not for Git)
 PROJECT_CONTEXT.md
 
+# Android app (local only, not deployed)
+android/
+
 # Lock files (optional - uncomment if you want to ignore)
 # package-lock.json
 # yarn.lock
