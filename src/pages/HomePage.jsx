@@ -98,17 +98,20 @@ const HomePage = ({ onNavigate }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900 pb-16">
-      {/* 头部 */}
-      <div className="bg-white border-b border-gray-200 shadow-sm safe-area-top">
+    <div className="min-h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900">
+      {/* 头部 - 固定在顶部 */}
+      <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 shadow-sm safe-area-top z-40">
         <div className="px-5 pt-5 pb-4">
           <h1 className="text-2xl font-black text-gray-900 leading-none mb-1">小王工具箱</h1>
           <p className="text-xs text-gray-400 font-mono italic">v{CURRENT_VERSION} | 实用工具集</p>
         </div>
       </div>
 
-      {/* 主内容 */}
-      <div className="flex-1 overflow-y-auto pb-4">
+      {/* 占位符 - 防止内容被固定头部遮挡 */}
+      <div className="h-[88px] safe-area-top"></div>
+
+      {/* 主内容 - 可滚动区域 */}
+      <div className="flex-1 overflow-y-auto pb-20">
         <div className="max-w-2xl mx-auto">
           {/* 数据仪表盘 */}
           {accountStats && accountStats.hasSales && (
