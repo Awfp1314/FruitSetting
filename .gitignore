@@ -45,6 +45,26 @@ PROJECT_CONTEXT.md
 # Android app (local only, not deployed)
 android/
 
+# Bubblewrap / TWA (Android APK 打包相关)
+twa-manifest.json
+android.keystore
+*.keystore
+*.apk
+*.aab
+app-release-signed.apk
+app-release-unsigned.apk
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+build/
+app/
+build.gradle
+gradle.properties
+settings.gradle
+manifest-checksum.txt
+store_icon.png
+
 # Lock files (optional - uncomment if you want to ignore)
 # package-lock.json
 # yarn.lock
