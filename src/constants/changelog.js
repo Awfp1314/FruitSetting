@@ -3,6 +3,20 @@
 // type: 'major' | 'minor' | 'patch'
 
 export const CHANGELOG = {
+  '3.0.18': {
+    date: '2026-02-11',
+    type: 'patch',
+    title: '修复 TWA/WebView 中页面无法滚动的问题',
+    changes: [
+      '🐛 修复 TWA/WebView 中页面无法滚动的问题',
+      '🔧 删除非必须的 .editorconfig 和 .gitattributes',
+      '🔧 清理前端代码，删除死代码，精简 changelog',
+      '🔧 将 Android/TWA 文件移入 android/ 目录，与前端代码分离',
+      '🔧 清理项目结构，删除冗余文档',
+      '• Revert "fix: 修复 TWA 中页面无法滚动的问题"',
+      '🐛 修复 TWA 中页面无法滚动的问题',
+    ],
+  },
   '3.0.17': {
     date: '2026-02-11',
     type: 'patch',
@@ -82,7 +96,7 @@ export const CHANGELOG = {
 };
 
 // 获取当前版本
-export const CURRENT_VERSION = '3.0.17';
+export const CURRENT_VERSION = '3.0.18';
 
 // 获取版本类型的中文名称
 export const getVersionTypeName = (type) => {
