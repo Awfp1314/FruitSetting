@@ -1,94 +1,33 @@
-# 老王工具箱
+# 摆摊小助手
 
-专为小生意人打造的实用工具集，简单好用，随时随地提升工作效率。
+专为摆摊人打造的实用工具集 PWA 应用。
 
-## 功能特性
+线上地址：https://www.uetookit.icu
 
-### 🍎 水果促销群文案生成器
+## 功能
 
-- 快速生成赶集通知
-- 自动格式化价格信息
-- 一键复制分享到群聊
-- 支持离线使用（PWA）
-- 本地数据持久化
-
-### 🚀 即将上线
-
-- 客户管理系统
-- 库存统计工具
+- 🗓️ 赶集日历 - 基于农历的赶集日提醒
+- 📒 记账本 - 进货、销售、库存、利润管理
+- 📝 促销文案 - 一键生成群发文案
+- 🤖 AI 助手 - 智能问答
 
 ## 技术栈
 
-- **框架**: React 18
-- **构建工具**: Vite 4
-- **样式**: Tailwind CSS 3
-- **图标**: Lucide React
-- **部署**: Vercel
+React 18 + Vite + Tailwind CSS + PWA
 
-## 项目结构
-
-```
-src/
-├── components/          # 可复用组件
-│   ├── AutoTextarea.jsx
-│   ├── CopyButton.jsx
-│   ├── StatusBar.jsx
-│   ├── Header.jsx
-│   ├── ConfigTab.jsx
-│   └── PreviewTab.jsx
-├── pages/              # 页面组件
-│   ├── HomePage.jsx
-│   └── FruitPromoPage.jsx
-├── hooks/              # 自定义 Hooks
-│   ├── useInstallPrompt.jsx
-│   └── useFormData.jsx
-├── utils/              # 工具函数
-│   ├── clipboard.js
-│   └── date.js
-├── constants/          # 常量配置
-│   └── defaultData.js
-├── styles/             # 样式文件
-│   └── index.css
-├── App.jsx             # 主应用组件
-└── main.jsx            # 入口文件
-```
-
-## 本地开发
+## 开发
 
 ```bash
-# 安装依赖
 npm install
-
-# 启动开发服务器
-npm run dev
-
-# 构建生产版本
-npm run build
-
-# 预览生产构建
-npm run preview
+npm run dev       # 开发服务器
+npm run build     # 构建
+npm run release   # 发布新版本（交互式）
 ```
 
 ## 部署
 
-项目配置为自动部署到 Vercel：
+推送到 main 分支后 Vercel 自动部署。
 
-1. 推送代码到 GitHub
-2. Vercel 自动检测并部署
-3. 每次推送都会触发新的部署
+## 数据
 
-## PWA 支持
-
-应用支持安装为 PWA（渐进式 Web 应用）：
-
-- 离线访问
-- 添加到主屏幕
-- 类原生应用体验
-
-## 许可证
-
-MIT License
-
----
-
-© 2026 老王工具箱 · 让小生意更轻松
+所有数据保存在浏览器本地 localStorage，不上传服务器。
