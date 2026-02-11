@@ -11,7 +11,10 @@ const CHANGELOG_PATH = path.join(ROOT, 'src/constants/changelog.js');
 const PACKAGE_PATH = path.join(ROOT, 'package.json');
 const GRADLE_PATH = path.join(ROOT, 'android/app/build.gradle');
 const APK_DEBUG = path.join(ROOT, 'android/app/build/outputs/apk/debug/app-debug.apk');
-const DESKTOP_APK = path.join(process.env.USERPROFILE || '', 'Desktop', '摆摊小助手.apk');
+
+function getDesktopApkPath(version) {
+  return path.join(process.env.USERPROFILE || '', 'Desktop', `摆摊小助手-v${version}.apk`);
+}
 
 function createRL() {
   return readline.createInterface({ input: process.stdin, output: process.stdout });
@@ -137,7 +140,7 @@ function gitCommitAndPush(message) {
 // 打包 APK
 function buildApk() {
   console.log('📱 打包 APK...');
-  // 查找 Java 21
+  const version = getCurrentVersion();
   const jdk21 = 'C:\\Program Files\\Microsoft\\jdk-21.0.8.9-hotspot';
   const gradlew = path.join(ROOT, 'android', 'gradlew.bat');
   const env = { ...process.env, JAVA_HOME: jdk21 };
@@ -145,9 +148,9 @@ function buildApk() {
     stdio: 'inherit',
     env,
   });
-  // 复制到桌面
-  fs.copyFileSync(APK_DEBUG, DESKTOP_APK);
-  console.log(`✅ APK 已放到桌面: ${DESKTOP_APK}`);
+  const dest = getDesktopApkPath(version);
+  fs.copyFileSync(APK_DEBUG, dest);
+  console.log(`✅ APK 已放到桌面: ${dest}`);
 }
 
 // 交互式收集版本信息
