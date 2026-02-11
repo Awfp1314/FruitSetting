@@ -3,6 +3,19 @@
 // type: 'major' | 'minor' | 'patch'
 
 export const CHANGELOG = {
+  '3.0.22': {
+    date: '2026-02-11',
+    type: 'patch',
+    title: '发布 v3.0.21 - 安装app',
+    changes: [
+      '🔧 APK 输出文件名带版本号（摆摊小助手-v版本.apk）',
+      '🔧 重构发布脚本，拆分为三个独立命令',
+      '🐛 修复 TWA/WebView 中页面无法滚动的问题',
+      '🔧 删除非必须的 .editorconfig 和 .gitattributes',
+      '🔧 清理前端代码，删除死代码，精简 changelog',
+      '🔧 将 Android/TWA 文件移入 android/ 目录，与前端代码分离',
+    ],
+  },
   '3.0.21': {
     date: '2026-02-11',
     type: 'patch',
@@ -127,7 +140,7 @@ export const CHANGELOG = {
 };
 
 // 获取当前版本
-export const CURRENT_VERSION = '3.0.21';
+export const CURRENT_VERSION = '3.0.22';
 
 // 获取版本类型的中文名称
 export const getVersionTypeName = (type) => {

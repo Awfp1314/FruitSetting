@@ -1,16 +1,11 @@
-const CACHE_NAME = 'laowang-v6';
+const CACHE_NAME = 'laowang-v7';
 
-// 安装：缓存核心文件
+// 安装：立即激活，不阻塞在缓存上
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(['/', '/index.html', '/manifest.json']);
-    })
-  );
   self.skipWaiting();
 });
 
-// 激活：清理旧缓存
+// 激活：清理旧缓存，立即接管
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
