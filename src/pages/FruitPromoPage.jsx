@@ -72,21 +72,25 @@ const FruitPromoPage = ({ onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] font-sans text-slate-900">
-      <StatusBar isOnline={isOnline} latency={latency} />
+    <div className="h-full flex flex-col bg-[#F0F2F5] font-sans text-slate-900">
+      <div className="flex-shrink-0">
+        <StatusBar isOnline={isOnline} latency={latency} />
+      </div>
 
-      <Header
-        currentTime={currentTime}
-        isAppMode={isAppMode}
-        installPrompt={installPrompt}
-        onInstall={() => handleInstall(showToast)}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        showBackButton={true}
-        onBack={onBack}
-      />
+      <div className="flex-shrink-0">
+        <Header
+          currentTime={currentTime}
+          isAppMode={isAppMode}
+          installPrompt={installPrompt}
+          onInstall={() => handleInstall(showToast)}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          showBackButton={true}
+          onBack={onBack}
+        />
+      </div>
 
-      <div className="p-4 space-y-4 pb-10">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-10">
         {activeTab === 'config' ? (
           <ConfigTab
             formData={formData}

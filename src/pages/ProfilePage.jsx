@@ -1,8 +1,45 @@
+import { useState, useEffect } from 'react';
 import { Settings, Info, Github, Heart, Download } from 'lucide-react';
 import { useToast } from '../components/Toast';
 
 const ProfilePage = () => {
   const { showToast } = useToast();
+  const [canInstall, setCanInstall] = useState(false);
+
+  useEffect(() => {
+    // 检查是否有安装提示可用
+    const checkInstall = () => setCanInstall(!!window.deferredPrompt);
+    checkInstall();
+
+    // 监听 beforeinstallprompt 事件
+    const handler = () => setCanInstall(true);
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstall = async () => {
+    // 检查是否已经以 PWA 模式运行
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+      showToast('应用已安装，您正在使用中', 'info');
+      return;
+    }
+
+    if (window.deferredPrompt) {
+      try {
+        window.deferredPrompt.prompt();
+        const { outcome } = await window.deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          showToast('应用安装成功', 'success');
+        }
+        window.deferredPrompt = null;
+        setCanInstall(false);
+      } catch (e) {
+        showToast('安装失败，请重试', 'error');
+      }
+    } else {
+      showToast('请点击浏览器菜单，选择"添加到主屏幕"即可安装', 'info', 3000);
+    }
+  };
 
   const menuItems = [
     {
@@ -20,15 +57,15 @@ const ProfilePage = () => {
     {
       icon: Download,
       label: '安装应用',
-      value: '添加到桌面',
-      onClick: () => showToast('点击浏览器菜单，选择"添加到主屏幕"即可安装', 'info', 3000),
+      value: canInstall ? '点击安装' : '添加到桌面',
+      onClick: handleInstall,
     },
   ];
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] font-sans text-slate-900 pb-16">
+    <div className="h-full flex flex-col bg-[#F0F2F5] font-sans text-slate-900">
       {/* 头部 */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="bg-white border-b border-gray-200 shadow-sm flex-shrink-0">
         <div className="px-5 pt-5 pb-4">
           <h1 className="text-2xl font-black text-gray-900 leading-none mb-1">我的</h1>
           <p className="text-xs text-gray-400 font-mono italic">个人中心</p>
@@ -36,7 +73,7 @@ const ProfilePage = () => {
       </div>
 
       {/* 内容 */}
-      <div className="p-4">
+      <div className="flex-1 overflow-y-auto p-4">
         <div className="max-w-2xl mx-auto space-y-4">
           {/* 功能菜单 */}
           <div className="bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden">

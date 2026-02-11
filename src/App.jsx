@@ -72,25 +72,31 @@ const App = () => {
 
   return (
     <ToastProvider>
-      {currentPage === 'home' && <HomePage onNavigate={handleNavigate} />}
-      {currentPage === 'profile' && <ProfilePage />}
-      {currentPage === 'fruit-promo' && <FruitPromoPage onBack={handleBack} />}
-      {currentPage === 'market-calendar' && <MarketCalendarPage onBack={handleBack} />}
-      {currentPage === 'account' && <AccountPage onNavigate={handleNavigate} onBack={handleBack} />}
-      {currentPage === 'account-add-sale' && <AddAccountPage onBack={handleBack} />}
-      {currentPage === 'account-add-inventory' && <AddInventoryPage onBack={handleBack} />}
-      {currentPage === 'ai-chat' && <AIChatPage onBack={handleBack} />}
+      <div className="h-full flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-hidden">
+          {currentPage === 'home' && <HomePage onNavigate={handleNavigate} />}
+          {currentPage === 'profile' && <ProfilePage />}
+          {currentPage === 'fruit-promo' && <FruitPromoPage onBack={handleBack} />}
+          {currentPage === 'market-calendar' && <MarketCalendarPage onBack={handleBack} />}
+          {currentPage === 'account' && (
+            <AccountPage onNavigate={handleNavigate} onBack={handleBack} />
+          )}
+          {currentPage === 'account-add-sale' && <AddAccountPage onBack={handleBack} />}
+          {currentPage === 'account-add-inventory' && <AddInventoryPage onBack={handleBack} />}
+          {currentPage === 'ai-chat' && <AIChatPage onBack={handleBack} />}
+        </div>
 
-      {showBottomNav && (
-        <BottomNav
-          currentPage={currentPage}
-          onNavigate={(pageId) => {
-            setCurrentPage(pageId);
-            setPageParams(null);
-            window.history.replaceState({ page: pageId }, '', `#${pageId}`);
-          }}
-        />
-      )}
+        {showBottomNav && (
+          <BottomNav
+            currentPage={currentPage}
+            onNavigate={(pageId) => {
+              setCurrentPage(pageId);
+              setPageParams(null);
+              window.history.replaceState({ page: pageId }, '', `#${pageId}`);
+            }}
+          />
+        )}
+      </div>
 
       {/* 版本更新弹窗 */}
       {showUpdateModal && <UpdateModal version={newVersion} onClose={closeUpdateModal} />}

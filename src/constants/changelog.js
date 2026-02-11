@@ -3,6 +3,14 @@
 // type: 'major' | 'minor' | 'patch'
 
 export const CHANGELOG = {
+  '3.0.21': {
+    date: '2026-02-11',
+    type: 'patch',
+    title: '安装app',
+    changes: [
+      '更新了安装方式',
+    ],
+  },
   '3.0.20': {
     date: '2026-02-11',
     type: 'patch',
@@ -119,7 +127,7 @@ export const CHANGELOG = {
 };
 
 // 获取当前版本
-export const CURRENT_VERSION = '3.0.20';
+export const CURRENT_VERSION = '3.0.21';
 
 // 获取版本类型的中文名称
 export const getVersionTypeName = (type) => {
