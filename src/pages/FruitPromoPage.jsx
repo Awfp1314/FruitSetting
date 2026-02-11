@@ -72,7 +72,7 @@ const FruitPromoPage = ({ onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900">
+    <div className="bg-[#F0F2F5] font-sans text-slate-900">
       <StatusBar isOnline={isOnline} latency={latency} />
 
       <Header
@@ -86,7 +86,7 @@ const FruitPromoPage = ({ onBack }) => {
         onBack={onBack}
       />
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-10">
+      <div className="p-4 space-y-4 pb-10">
         {activeTab === 'config' ? (
           <ConfigTab
             formData={formData}

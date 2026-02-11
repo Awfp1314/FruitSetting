@@ -70,7 +70,7 @@ const AccountPage = ({ onNavigate, onBack }) => {
   const activeInventory = getActiveInventory();
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900 pb-16">
+    <div className="bg-[#F0F2F5] font-sans text-slate-900 pb-16">
       {/* 头部 + 标签页 */}
       <div className="bg-white shadow-sm">
         <div className="px-4 pt-4 pb-3 flex items-center justify-between">
@@ -120,7 +120,7 @@ const AccountPage = ({ onNavigate, onBack }) => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="p-4 space-y-3">
         {activeTab === 'sales' ? (
           <>
             {/* 本月统计 */}

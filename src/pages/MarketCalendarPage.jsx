@@ -27,7 +27,7 @@ const MarketCalendarPage = ({ onBack }) => {
   const todayMarkets = getMarketsForDay(todayInfo.lunarDay);
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900">
+    <div className="bg-[#F0F2F5] font-sans text-slate-900">
       {/* 头部 */}
       <div className="bg-white sticky top-0 z-40 shadow-sm">
         <div className="px-4 pt-4 pb-3 flex justify-between items-center">
@@ -50,7 +50,7 @@ const MarketCalendarPage = ({ onBack }) => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 pb-10">
+      <div className="p-4 space-y-3 pb-10">
         {/* 今日日期 + 集市状态 */}
         <div className="bg-gradient-to-br from-orange-400 via-orange-500 to-red-500 rounded-2xl shadow-lg p-4 text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-28 h-28 bg-white/5 rounded-full -mr-12 -mt-12"></div>
