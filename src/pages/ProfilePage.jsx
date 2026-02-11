@@ -1,45 +1,8 @@
-import { useState, useEffect } from 'react';
 import { Settings, Info, Github, Heart, Download } from 'lucide-react';
 import { useToast } from '../components/Toast';
 
 const ProfilePage = () => {
   const { showToast } = useToast();
-  const [canInstall, setCanInstall] = useState(false);
-
-  useEffect(() => {
-    // 检查是否有安装提示可用
-    const checkInstall = () => setCanInstall(!!window.deferredPrompt);
-    checkInstall();
-
-    // 监听 beforeinstallprompt 事件
-    const handler = () => setCanInstall(true);
-    window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
-
-  const handleInstall = async () => {
-    // 检查是否已经以 PWA 模式运行
-    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
-      showToast('应用已安装，您正在使用中', 'info');
-      return;
-    }
-
-    if (window.deferredPrompt) {
-      try {
-        window.deferredPrompt.prompt();
-        const { outcome } = await window.deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-          showToast('应用安装成功', 'success');
-        }
-        window.deferredPrompt = null;
-        setCanInstall(false);
-      } catch (e) {
-        showToast('安装失败，请重试', 'error');
-      }
-    } else {
-      showToast('请点击浏览器菜单，选择"添加到主屏幕"即可安装', 'info', 3000);
-    }
-  };
 
   const menuItems = [
     {
@@ -57,8 +20,8 @@ const ProfilePage = () => {
     {
       icon: Download,
       label: '安装应用',
-      value: canInstall ? '点击安装' : '添加到桌面',
-      onClick: handleInstall,
+      value: '添加到桌面',
+      onClick: () => showToast('点击浏览器菜单，选择"添加到主屏幕"即可安装', 'info', 3000),
     },
   ];
 

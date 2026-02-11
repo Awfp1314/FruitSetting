@@ -1,4 +1,4 @@
-const CACHE_NAME = 'laowang-v7';
+const CACHE_NAME = 'laowang-v8';
 
 // 安装：立即激活，不阻塞在缓存上
 self.addEventListener('install', (event) => {
