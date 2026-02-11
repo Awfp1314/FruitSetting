@@ -98,7 +98,7 @@ const HomePage = ({ onNavigate }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900">
+    <div className="min-h-screen bg-[#F0F2F5] font-sans text-slate-900">
       {/* 头部 - 固定在顶部 */}
       <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 shadow-sm safe-area-top z-40">
         <div className="px-5 pt-5 pb-4">
@@ -110,8 +110,8 @@ const HomePage = ({ onNavigate }) => {
       {/* 占位符 - 防止内容被固定头部遮挡 */}
       <div className="h-[88px] safe-area-top"></div>
 
-      {/* 主内容 - 可滚动区域 */}
-      <div className="flex-1 overflow-y-auto pb-20">
+      {/* 主内容 */}
+      <div className="pb-20">
         <div className="max-w-2xl mx-auto">
           {/* 数据仪表盘 */}
           {accountStats && accountStats.hasSales && (

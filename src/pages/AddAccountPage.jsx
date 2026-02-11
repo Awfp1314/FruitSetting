@@ -77,7 +77,7 @@ const AddAccountPage = ({ onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900">
+    <div className="min-h-screen bg-[#F0F2F5] font-sans text-slate-900">
       {/* 头部 */}
       <div className="bg-white sticky top-0 z-40 shadow-sm">
         <div className="px-4 pt-4 pb-3 flex justify-between items-center">
@@ -100,7 +100,7 @@ const AddAccountPage = ({ onBack }) => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 pb-10">
+      <div className="p-4 space-y-3 pb-10">
         {activeInventory.length === 0 ? (
           <div className="bg-white p-10 rounded-2xl text-center">
             <Package size={48} className="mx-auto text-gray-300 mb-3" />
