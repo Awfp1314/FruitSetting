@@ -11,7 +11,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext js,jsx",
-    "release": "node release.cjs"
+    "release": "node scripts/release-all.cjs",
+    "release:web": "node scripts/release-web.cjs",
+    "release:apk": "node scripts/build-apk.cjs"
   },
   "dependencies": {
     "lucide-react": "^0.263.1",
