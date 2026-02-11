@@ -88,10 +88,7 @@ const AIChatPage = ({ onBack }) => {
   };
 
   return (
-    <div
-      className="h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900"
-      style={{ height: '100dvh' }}
-    >
+    <div className="min-h-screen bg-[#F0F2F5] flex flex-col font-sans text-slate-900">
       {/* 头部 */}
       <div className="bg-white sticky top-0 z-40 shadow-sm">
         <div className="px-4 pt-4 pb-3 flex justify-between items-center">
