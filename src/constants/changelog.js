@@ -3,19 +3,6 @@
 // type: 'major' | 'minor' | 'patch'
 
 export const CHANGELOG = {
-  '3.0.17': {
-    date: '2026-02-11',
-    type: 'patch',
-    title: '替换图标为自定义 tubiao，manifest 和 index.html 使用本地图标',
-    changes: [
-      '🐛 修复 TWA 中页面无法滚动的问题',
-      '🐛 固定标题栏位置，防止随内容滚动',
-      '🐛 修复 WebView 安全区域显示问题，添加顶部和底部安全区域支持',
-      '🐛 添加安全区域支持以适配 WebView 全屏显示',
-      '🔧 gitignore 添加 bubblewrap/TWA 相关文件，保持仓库干净',
-      '✨ 替换图标为自定义 tubiao，manifest 和 index.html 使用本地图标',
-    ],
-  },
   '3.0.16': {
     date: '2026-02-10',
     type: 'patch',
@@ -347,7 +334,7 @@ export const CHANGELOG = {
 };
 
 // 获取当前版本
-export const CURRENT_VERSION = '3.0.17';
+export const CURRENT_VERSION = '3.0.16';
 
 // 获取版本类型的中文名称
 export const getVersionTypeName = (type) => {
