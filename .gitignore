@@ -33,20 +33,5 @@ Thumbs.db
 # Local docs
 PROJECT_CONTEXT.md
 
-# Android / TWA (local build only)
-.gradle/
-gradle/
-gradlew
-gradlew.bat
-build.gradle
-settings.gradle
-gradle.properties
-local.properties
-manifest-checksum.txt
-twa-manifest.json
-store_icon.png
-android.keystore
-*.keystore
-*.apk
-*.aab
-app/
+# Android / TWA
+android/
