@@ -28,3 +28,13 @@ export const getNextDaysLunar = (days = 7) => {
 
   return result;
 };
+
+// 获取今天的日期描述字符串
+export const getTodayDateStr = () => {
+  const date = new Date();
+  return `今天（${date.toLocaleDateString('zh-CN', {
+    month: 'numeric',
+    day: 'numeric',
+    weekday: 'long',
+  })}）全天`;
+};

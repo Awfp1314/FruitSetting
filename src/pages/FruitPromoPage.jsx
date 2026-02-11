@@ -7,7 +7,7 @@ import { useFormData } from '../hooks/useFormData';
 import { useInstallPrompt } from '../hooks/useInstallPrompt';
 import { copyToClipboard } from '../utils/clipboard';
 import { useToast } from '../components/Toast';
-import { getTodayDateStr } from '../utils/date';
+import { getTodayDateStr } from '../utils/lunar';
 
 const FruitPromoPage = ({ onBack }) => {
   const [activeTab, setActiveTab] = useState('config');
