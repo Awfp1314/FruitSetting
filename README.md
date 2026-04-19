@@ -1,8 +1,13 @@
 # 摆摊小助手
 
+![React](https://img.shields.io/badge/React-18.2-blue.svg)
+![Vite](https://img.shields.io/badge/Vite-5.0-646CFF.svg)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC.svg)
+![PWA](https://img.shields.io/badge/PWA-enabled-5A0FC8.svg)
+
 专为摆摊人打造的实用工具集 PWA 应用。
 
-线上地址：https://www.uetookit.icu
+🌐 **在线访问**: [https://www.uetookit.icu](https://www.uetookit.icu)
 
 ## 功能
 
