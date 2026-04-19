@@ -16,6 +16,24 @@
 - 📝 促销文案 - 一键生成群发文案
 - 🤖 AI 助手 - 智能问答
 
+## 📱 功能展示
+
+### 赶集日历
+
+![赶集日历](screenshots/screenshot-calendar.jpg)
+
+### 记账本
+
+![记账本](screenshots/screenshot-accounting.jpg)
+
+### 促销文案生成
+
+![促销文案](screenshots/screenshot-promotion.jpg)
+
+### AI 助手
+
+![AI 助手](screenshots/screenshot-ai.jpg)
+
 ## 技术栈
 
 React 18 + Vite + Tailwind CSS + PWA
