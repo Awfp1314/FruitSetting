@@ -35,3 +35,8 @@ PROJECT_CONTEXT.md
 
 # Android / TWA
 android/
+
+# Temporary files
+*.tmp
+*.bak
+dfs
