@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Send, Loader2, Trash2 } from 'lucide-react';
+import { ArrowLeft, Send, Loader2, Trash2, Settings } from 'lucide-react';
 import { streamAI } from '../utils/ai';
 import { collectBusinessContext } from '../utils/aiContext';
 import { getLunarInfo } from '../utils/lunar';
+import { hasAIConfig } from '../utils/aiConfig';
+import AIConfigModal from '../components/AIConfigModal';
 
 const AIChatPage = ({ onBack }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showConfig, setShowConfig] = useState(false);
   const scrollRef = useRef(null);
 
   useEffect(() => {
@@ -17,6 +20,18 @@ const AIChatPage = ({ onBack }) => {
   }, [messages]);
 
   useEffect(() => {
+    // 检查是否配置了 API Key
+    if (!hasAIConfig()) {
+      setMessages([
+        {
+          role: 'ai',
+          content:
+            '👋 你好！我是你的AI助手。\n\n请先点击右上角的设置按钮配置 API Key，才能开始使用 AI 功能。',
+        },
+      ]);
+      return;
+    }
+
     // 打招呼
     const todayInfo = getLunarInfo();
     const hour = new Date().getHours();
@@ -37,6 +52,17 @@ const AIChatPage = ({ onBack }) => {
 
   const sendMessage = async (userMsg) => {
     if (!userMsg.trim() || loading) return;
+
+    // 检查配置
+    if (!hasAIConfig()) {
+      setMessages((prev) => [
+        ...prev,
+        { role: 'user', content: userMsg },
+        { role: 'ai', content: '❌ 请先配置 API Key 才能使用 AI 功能' },
+      ]);
+      return;
+    }
+
     setLoading(true);
 
     const todayInfo = getLunarInfo();
@@ -114,6 +140,12 @@ const AIChatPage = ({ onBack }) => {
           >
             <Trash2 size={18} className="text-gray-400" />
           </button>
+          <button
+            onClick={() => setShowConfig(true)}
+            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <Settings size={18} className="text-gray-400" />
+          </button>
         </div>
       </div>
 
@@ -167,6 +199,9 @@ const AIChatPage = ({ onBack }) => {
           </button>
         </div>
       </div>
+
+      {/* AI 配置弹窗 */}
+      {showConfig && <AIConfigModal onClose={() => setShowConfig(false)} />}
     </div>
   );
 };

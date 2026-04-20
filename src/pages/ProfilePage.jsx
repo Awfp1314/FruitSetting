@@ -1,10 +1,19 @@
-import { Settings, Info, Github, Heart, Download } from 'lucide-react';
+import { useState } from 'react';
+import { Settings, Info, Github, Heart, Download, Key } from 'lucide-react';
 import { useToast } from '../components/Toast';
+import AIConfigModal from '../components/AIConfigModal';
 
 const ProfilePage = () => {
   const { showToast } = useToast();
+  const [showAIConfig, setShowAIConfig] = useState(false);
 
   const menuItems = [
+    {
+      icon: Key,
+      label: 'AI 配置',
+      value: '设置 API Key',
+      onClick: () => setShowAIConfig(true),
+    },
     {
       icon: Info,
       label: '关于应用',
@@ -70,6 +79,9 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+
+      {/* AI 配置弹窗 */}
+      {showAIConfig && <AIConfigModal onClose={() => setShowAIConfig(false)} />}
     </div>
   );
 };

@@ -1,5 +1,4 @@
-const API_KEY = 'hk-3ziq891000002789d5f474eb80180cbe5ed20b1ab17038fb';
-const API_URL = 'https://api.openai-hk.com/v1/chat/completions';
+import { getAIConfig } from './aiConfig';
 
 const SYSTEM_PROMPT = `你是一个贴心务实的摆摊助手。你服务的对象是小王，甘肃省庆阳市正宁县山河镇松树村人，在县城周边各乡镇赶集卖水果。
 
@@ -36,21 +35,27 @@ const SYSTEM_PROMPT = `你是一个贴心务实的摆摊助手。你服务的对
 
 // 流式调用 AI
 export const streamAI = async (message, onMessage) => {
+  const config = getAIConfig();
+  if (!config) {
+    throw new Error('请先在"我的"页面配置 AI API Key');
+  }
+
+  const { apiUrl, apiKey, model } = config;
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 30000); // 30秒超时
 
   try {
     console.log('开始 AI 请求...');
 
-    const response = await fetch(API_URL, {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
         max_tokens: 800,
-        model: 'deepseek-v3',
+        model: model,
         temperature: 0.8,
         top_p: 1,
         presence_penalty: 1,
@@ -149,16 +154,23 @@ export const streamAI = async (message, onMessage) => {
 
 // 普通调用 AI（非流式）
 export const callAI = async (message) => {
+  const config = getAIConfig();
+  if (!config) {
+    throw new Error('请先在"我的"页面配置 AI API Key');
+  }
+
+  const { apiUrl, apiKey, model } = config;
+
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
         max_tokens: 800,
-        model: 'deepseek-v3',
+        model: model,
         temperature: 0.8,
         top_p: 1,
         presence_penalty: 1,

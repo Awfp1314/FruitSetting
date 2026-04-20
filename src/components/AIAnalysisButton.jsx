@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { X, Loader2, Send } from 'lucide-react';
 import { streamAI } from '../utils/ai';
 import { collectBusinessContext } from '../utils/aiContext';
+import { hasAIConfig } from '../utils/aiConfig';
 
 const AIAnalysisButton = ({ markets, todayInfo }) => {
   const [showModal, setShowModal] = useState(false);
@@ -28,6 +29,17 @@ const AIAnalysisButton = ({ markets, todayInfo }) => {
   }, [messages]);
 
   const sendMessage = async (userMsg, isFirst = false) => {
+    // 检查配置
+    if (!hasAIConfig()) {
+      setMessages([
+        {
+          role: 'ai',
+          content: '❌ 请先在"我的"页面配置 API Key 才能使用 AI 功能',
+        },
+      ]);
+      return;
+    }
+
     setLoading(true);
 
     const context = collectBusinessContext(markets, todayInfo);
